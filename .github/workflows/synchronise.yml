@@ -14,11 +14,8 @@ jobs:
       - name: Clone repository
         uses: actions/checkout@v4
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build TypeScript code
-        run: npm run build
+      - name: Compile TypeScript sources
+        uses: ./.github/actions/build
 
       - name: Validate configuration
         run: npm run validate
