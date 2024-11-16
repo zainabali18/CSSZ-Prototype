@@ -92,6 +92,9 @@ async function validateExistingGroup(configGroup: GroupSpecification) {
 
 async function runWrapper() {
   const configGroups = await readGroups();
+  console.log(
+    `Found ${configGroups.length} group(s) in the local configuration file.`
+  );
 
   students = await restoreIdMapping("config/students.json").catch(
     async (err) => {
@@ -105,6 +108,9 @@ async function runWrapper() {
   );
   const groups = await getCourseGroups(SEPP_COURSE);
   prototypeGroups = groups[PROTOTYPE_GROUPS_CATEGORY];
+  console.log(
+    `Found ${Object.keys(prototypeGroups).length} group(s) on Canvas.`
+  );
 
   configGroups.forEach(validateExistingGroup);
 }
