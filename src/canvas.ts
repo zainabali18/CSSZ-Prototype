@@ -13,6 +13,7 @@ export function makeCanvasRequest(
   body?: BodyInit | undefined
 ): Request {
   const request = new Request(`${CANVAS_BASE_URL}/${url}`, {
+    method: body === undefined ? "GET" : "POST",
     body,
   });
   request.headers.append("Authorization", `Bearer ${process.env.CANVAS_TOKEN}`);
