@@ -35,7 +35,7 @@ jobs:
       - name: Delete existing groups.json
         if: github.event_name == 'workflow_run'
         run: |
-          echo "${{ github.event.workflow_run }}"
+          echo "${{ toJson(github.event.workflow_run) }}"
           rm ./config/groups.json
 
       - name: Download PR artifact
