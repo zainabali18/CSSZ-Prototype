@@ -52,7 +52,7 @@ async function validateExistingGroup(configGroup: GroupSpecification) {
             );
           } else {
             console.log(
-              `Student ${member} (${canvasId}) is a member on Canvas, but not in the configuration file.`
+              `Student ${member} (${canvasId}) is a member in the configuration file, but not on Canvas.`
             );
           }
         }
@@ -74,7 +74,7 @@ async function validateExistingGroup(configGroup: GroupSpecification) {
 
           if (!found) {
             console.log(
-              `Student ${id} (${canvasMember}) needs to be removed from the group.`
+              `Student ${id} (${canvasMember}) needs to be removed from the group on Canvas.`
             );
           }
         }
