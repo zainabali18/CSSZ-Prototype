@@ -48,6 +48,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Validate configuration
+        if: github.event_name == 'workflow_run'
         run: npm run validate
         env:
           CANVAS_TOKEN: ${{ secrets.CANVAS_TOKEN }}
