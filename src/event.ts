@@ -54,45 +54,45 @@ const mdInlineCode = (str: string): string => `\`${str}\``;
 
 export function writeMarkdown(actions: Events) {
   let output: string =
-    "The changes made to the configuration file will result in the following actions.\n\n";
+    "The changes made to the configuration file will result in the following actions.\n";
 
   if (actions.groupsToCreate.length > 0) {
-    output += "## Groups to create\n\n";
+    output += "\n## Groups to create\n\n";
 
     actions.groupsToCreate.forEach((group) => {
       output += `- A group named \`${group.name}\` with members: ${group.members
         .map((member) => mdInlineCode(member.sis_user_id))
-        .join(", ")}`;
+        .join(", ")}\n`;
     });
   }
 
   if (actions.groupsToUpdate.length > 0) {
-    output += "## Groups to update\n\n";
+    output += "\n## Groups to update\n\n";
 
     actions.groupsToUpdate.forEach((group) => {
       output += `- A group named ${mdInlineCode(group.oldName)} (${
         group.group
-      }) will be renamed to ${mdInlineCode(group.newName)}`;
+      }) will be renamed to ${mdInlineCode(group.newName)}\n`;
     });
   }
 
   if (actions.membersToRemove.length > 0) {
-    output += "## Students to remove from groups\n\n";
+    output += "\n## Students to remove from groups\n\n";
 
     actions.membersToRemove.forEach((member) => {
       output += `- Remove student ${mdInlineCode(
         member.member.sis_user_id
-      )} from group ${mdInlineCode(member.group.toString())}`;
+      )} from group ${mdInlineCode(member.group.toString())}\n`;
     });
   }
 
   if (actions.membersToAdd.length > 0) {
-    output += "## Students to add to groups\n\n";
+    output += "\n## Students to add to groups\n\n";
 
     actions.membersToAdd.forEach((member) => {
       output += `- Add student ${mdInlineCode(
         member.member.sis_user_id
-      )} to group ${mdInlineCode(member.group.toString())}`;
+      )} to group ${mdInlineCode(member.group.toString())}\n`;
     });
   }
 
