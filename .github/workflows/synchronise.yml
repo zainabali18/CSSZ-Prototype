@@ -71,3 +71,9 @@ jobs:
                 body: fs.readFileSync('changes.md', 'utf-8')
               });
             }
+
+      - name: "Apply changes"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: npm run apply
+        env:
+          CANVAS_TOKEN: ${{ secrets.CANVAS_TOKEN }}
