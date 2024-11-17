@@ -20,20 +20,20 @@ let prototypeGroups: GroupsById<CanvasGroup>;
 
 async function validateExistingGroup(
   events: Events,
-  configGroup: GroupSpecification
+  configGroup: GroupSpecification,
 ) {
   if (configGroup.id !== undefined) {
     const matchingGroup = prototypeGroups[configGroup.id];
 
     if (matchingGroup !== undefined) {
       console.log(
-        `Group ${configGroup.name} exists as group ${configGroup.id} on Canvas.`
+        `Group ${configGroup.name} exists as group ${configGroup.id} on Canvas.`,
       );
 
       // Check that the name returned by Canvas matches what we have in the configuration.
       if (matchingGroup.name !== configGroup.name) {
         console.log(
-          `Name needs to be changed from ${matchingGroup.name} to ${configGroup.name}`
+          `Name needs to be changed from ${matchingGroup.name} to ${configGroup.name}`,
         );
 
         events.groupsToUpdate.push({
@@ -56,11 +56,11 @@ async function validateExistingGroup(
         } else {
           if (canvasMembers[canvasId] !== undefined) {
             console.log(
-              `Student ${member} (${canvasId}) is a member of the group.`
+              `Student ${member} (${canvasId}) is a member of the group.`,
             );
           } else {
             console.log(
-              `Student ${member} (${canvasId}) is a member in the configuration file, but not on Canvas.`
+              `Student ${member} (${canvasId}) is a member in the configuration file, but not on Canvas.`,
             );
             events.membersToAdd.push({
               group: matchingGroup.id,
@@ -86,7 +86,7 @@ async function validateExistingGroup(
 
           if (!found) {
             console.log(
-              `Student ${id} (${canvasMember}) needs to be removed from the group on Canvas.`
+              `Student ${id} (${canvasMember}) needs to be removed from the group on Canvas.`,
             );
             events.membersToRemove.push({
               group: matchingGroup.id,
@@ -97,7 +97,7 @@ async function validateExistingGroup(
       });
     } else {
       console.error(
-        `Group ${configGroup.name} has id ${configGroup.id}, which does not exist on Canvas.`
+        `Group ${configGroup.name} has id ${configGroup.id}, which does not exist on Canvas.`,
       );
     }
   } else {
@@ -125,7 +125,7 @@ export async function synchronise(): Promise<SynchroniseInfo> {
     configGroups: await readGroups(),
   };
   console.log(
-    `Found ${results.configGroups.length} group(s) in the local configuration file.`
+    `Found ${results.configGroups.length} group(s) in the local configuration file.`,
   );
 
   students = await restoreIdMapping("config/students.json").catch(
@@ -136,12 +136,12 @@ export async function synchronise(): Promise<SynchroniseInfo> {
       const result = await getStudents(SEPP_COURSE);
       await cacheIdMapping("config/students.json", result);
       return result;
-    }
+    },
   );
   const groups = await getCourseGroups(SEPP_COURSE);
   prototypeGroups = groups[PROTOTYPE_GROUPS_CATEGORY];
   console.log(
-    `Found ${Object.keys(prototypeGroups).length} group(s) on Canvas.`
+    `Found ${Object.keys(prototypeGroups).length} group(s) on Canvas.`,
   );
 
   for (let index = 0; index < results.configGroups.length; index++) {

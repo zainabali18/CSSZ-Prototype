@@ -83,7 +83,7 @@ export function writeMarkdown(actions: Events) {
 
     actions.membersToRemove.forEach((member) => {
       output += `- Remove student ${mdInlineCode(
-        member.member.sis_user_id
+        member.member.sis_user_id,
       )} from group ${mdInlineCode(member.group.toString())}\n`;
     });
   }
@@ -93,13 +93,13 @@ export function writeMarkdown(actions: Events) {
 
     actions.membersToAdd.forEach((member) => {
       output += `- Add student ${mdInlineCode(
-        member.member.sis_user_id
+        member.member.sis_user_id,
       )} to group ${mdInlineCode(member.group.toString())}\n`;
     });
   }
 
   output += `\n## JSON\n\n<details>\n<summary>JSON representation of the changes</summary>\n\n\`\`\`\n${JSON.stringify(
-    actions
+    actions,
   )}\n\`\`\`\n\n</details>\n`;
 
   writeFileSync(MARKDOWN_OUTPUT, output);

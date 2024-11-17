@@ -46,7 +46,7 @@ export interface GroupsById<T extends BaseGroup> {
 /** Reads the local group configuration file. */
 export async function readGroups(): Promise<GroupSpecification[]> {
   const groups: GroupSpecification[] = yaml.parse(
-    fs.readFileSync(GROUP_CONFIG_FILE, "utf-8")
+    fs.readFileSync(GROUP_CONFIG_FILE, "utf-8"),
   );
 
   return groups;
@@ -59,7 +59,7 @@ export async function readGroups(): Promise<GroupSpecification[]> {
  * @returns Returns the groups, organised by group category.
  */
 export async function getCourseGroups(
-  course: number
+  course: number,
 ): Promise<GroupsByCategory<CanvasGroup>> {
   const request = makeCanvasRequest(`/courses/${course}/groups?per_page=200`);
   const response = await fetch(request);
@@ -108,14 +108,14 @@ export async function getGroupMembers(id: number): Promise<StudentsByCanvasId> {
  */
 export async function createGroup(
   category: number,
-  name: string
+  name: string,
 ): Promise<CanvasGroup> {
   const data = new URLSearchParams();
   data.append("name", name);
 
   const request = makeCanvasRequest(
     `group_categories/${category}/groups`,
-    data
+    data,
   );
   const response = await fetch(request);
   return response.json();

@@ -10,7 +10,7 @@ import { CANVAS_BASE_URL } from "./const";
  */
 export function makeCanvasRequest(
   url: string,
-  body?: BodyInit | undefined
+  body?: BodyInit | undefined,
 ): Request {
   const request = new Request(`${CANVAS_BASE_URL}/${url}`, {
     method: body === undefined ? "GET" : "POST",

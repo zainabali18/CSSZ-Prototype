@@ -80,7 +80,7 @@ export async function restoreIdMapping(path: string): Promise<CourseStudents> {
  */
 export async function cacheIdMapping(
   path: string,
-  mapping: CourseStudents
+  mapping: CourseStudents,
 ): Promise<void> {
   writeFileSync(path, JSON.stringify(mapping));
 }
