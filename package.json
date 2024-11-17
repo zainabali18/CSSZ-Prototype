@@ -4,7 +4,8 @@
   "scripts": {
     "build": "npx tsc",
     "check": "node ./lib/check.js",
-    "validate": "node ./lib/validate.js"
+    "validate": "node ./lib/validate.js",
+    "apply": "node ./lib/apply.js"
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
