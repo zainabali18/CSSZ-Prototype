@@ -35,6 +35,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: groups.json
+          path: ./config/
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
