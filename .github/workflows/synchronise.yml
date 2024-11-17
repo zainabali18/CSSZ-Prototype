@@ -9,15 +9,11 @@ on:
     branches:
       - main
 
-concurrency:
-  group: "canvas-update"
-  cancel-in-progress: false
-
 jobs:
   validate:
     name: "Validate"
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    if: github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success'
 
     permissions:
       contents: read
@@ -72,8 +68,26 @@ jobs:
               });
             }
 
+  apply:
+    name: "Apply"
+    runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' && github.ref == 'refs/heads/main'
+
+    concurrency:
+      group: "canvas-update"
+      cancel-in-progress: false
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Compile TypeScript sources
+        uses: ./.github/actions/build
+
       - name: "Apply changes"
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: npm run apply
         env:
           CANVAS_TOKEN: ${{ secrets.CANVAS_TOKEN }}
