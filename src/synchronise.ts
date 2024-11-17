@@ -114,11 +114,18 @@ async function validateExistingGroup(
   }
 }
 
-export async function synchronise(): Promise<Events> {
-  const events: Events = makeEmptyActions();
-  const configGroups = await readGroups();
+export interface SynchroniseInfo {
+  events: Events;
+  configGroups: GroupSpecification[];
+}
+
+export async function synchronise(): Promise<SynchroniseInfo> {
+  const results: SynchroniseInfo = {
+    events: makeEmptyActions(),
+    configGroups: await readGroups(),
+  };
   console.log(
-    `Found ${configGroups.length} group(s) in the local configuration file.`
+    `Found ${results.configGroups.length} group(s) in the local configuration file.`
   );
 
   students = await restoreIdMapping("config/students.json").catch(
@@ -137,9 +144,9 @@ export async function synchronise(): Promise<Events> {
     `Found ${Object.keys(prototypeGroups).length} group(s) on Canvas.`
   );
 
-  for (let index = 0; index < configGroups.length; index++) {
-    await validateExistingGroup(events, configGroups[index]);
+  for (let index = 0; index < results.configGroups.length; index++) {
+    await validateExistingGroup(results.events, results.configGroups[index]);
   }
 
-  return events;
+  return results;
 }

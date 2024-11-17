@@ -2,7 +2,8 @@ import { writeMarkdown } from "./event";
 import { synchronise } from "./synchronise";
 
 async function runWrapper() {
-  const events = await synchronise();
+  const results = await synchronise();
+  const events = results.events;
 
   // Write a summary of the changes as markdown, if there are any changes.
   if (
