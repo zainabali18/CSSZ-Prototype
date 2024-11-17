@@ -15,11 +15,13 @@ import {
   restoreIdMapping,
 } from "./students";
 
-let events: Events = makeEmptyActions();
 let students: CourseStudents;
 let prototypeGroups: GroupsById<CanvasGroup>;
 
-async function validateExistingGroup(configGroup: GroupSpecification) {
+async function validateExistingGroup(
+  events: Events,
+  configGroup: GroupSpecification
+) {
   if (configGroup.id !== undefined) {
     const matchingGroup = prototypeGroups[configGroup.id];
 
@@ -112,6 +114,7 @@ async function validateExistingGroup(configGroup: GroupSpecification) {
 }
 
 export async function synchronise(): Promise<Events> {
+  const events: Events = makeEmptyActions();
   const configGroups = await readGroups();
   console.log(
     `Found ${configGroups.length} group(s) in the local configuration file.`
@@ -134,7 +137,7 @@ export async function synchronise(): Promise<Events> {
   );
 
   for (let index = 0; index < configGroups.length; index++) {
-    await validateExistingGroup(configGroups[index]);
+    await validateExistingGroup(events, configGroups[index]);
   }
 
   return events;
