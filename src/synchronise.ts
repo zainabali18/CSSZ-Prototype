@@ -124,6 +124,12 @@ export async function synchronise(): Promise<SynchroniseInfo> {
     events: makeEmptyActions(),
     configGroups: await readGroups(),
   };
+
+  if (results.configGroups === null) {
+    console.log(`Configuration file is empty, nothing to do!`);
+    return results;
+  }
+
   console.log(
     `Found ${results.configGroups.length} group(s) in the local configuration file.`,
   );
