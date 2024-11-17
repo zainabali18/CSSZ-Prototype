@@ -96,5 +96,9 @@ export function writeMarkdown(actions: Events) {
     });
   }
 
+  output += `\n## JSON\n\n<details>\n<summary>JSON representation of the changes</summary>\n\n\`\`\`${JSON.stringify(
+    actions
+  )}\`\`\`</details>\n`;
+
   writeFileSync(MARKDOWN_OUTPUT, output);
 }
