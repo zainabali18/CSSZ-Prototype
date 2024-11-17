@@ -91,3 +91,16 @@ jobs:
         run: npm run apply
         env:
           CANVAS_TOKEN: ${{ secrets.CANVAS_TOKEN }}
+
+      - name: Format group configuration file
+        run: npm run format-config
+
+      - name: Check for changes and commit them
+        run: |
+          if [ ! -z "$(git status --porcelain)" ]; then
+            git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "github-actions[bot]"
+            git add --all
+            git commit -m "Update configuration with Canvas IDs"
+            git push origin "HEAD:${{ github.ref }}"
+          fi
