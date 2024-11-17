@@ -105,6 +105,7 @@ async function validateExistingGroup(
     console.log(`Group ${configGroup.name} does not exist yet.`);
 
     events.groupsToCreate.push({
+      specification: configGroup,
       name: configGroup.name,
       members: configGroup.members.map((member) => {
         return { id: students.byId[member], sis_user_id: member };

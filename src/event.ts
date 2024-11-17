@@ -1,6 +1,7 @@
 import { writeFileSync } from "fs";
 import { MARKDOWN_OUTPUT } from "./const";
 import { StudentIDs } from "./students";
+import { GroupSpecification } from "./groups";
 
 export enum EventType {
   CREATE_GROUP,
@@ -16,6 +17,7 @@ export interface Event {
 export interface CreateGroupEvent {
   name: string;
   members: StudentIDs[];
+  specification: GroupSpecification;
 }
 
 export interface UpdateGroupEvent {
