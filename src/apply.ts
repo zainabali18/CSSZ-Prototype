@@ -2,6 +2,7 @@ import { writeFileSync } from "fs";
 import { GROUP_CONFIG_FILE, PROTOTYPE_GROUPS_CATEGORY } from "./const";
 import { createGroup, readGroups } from "./groups";
 import { synchronise } from "./synchronise";
+import * as yaml from "yaml";
 
 async function runWrapper() {
   const results = await synchronise();
@@ -14,7 +15,7 @@ async function runWrapper() {
       event.specification.id = group.id;
     }
 
-    writeFileSync(GROUP_CONFIG_FILE, JSON.stringify(results.configGroups));
+    writeFileSync(GROUP_CONFIG_FILE, yaml.stringify(results.configGroups));
   } catch (err) {
     console.error(`Failed to read actions from file: ${err}`);
     process.exit(1);

@@ -26,7 +26,7 @@ export const STUDENT_MAPPING_FILE = "config/students.json";
 /**
  * The path to the file used for storing the group configurations.
  */
-export const GROUP_CONFIG_FILE = "config/groups.json";
+export const GROUP_CONFIG_FILE = "config/groups.yaml";
 
 /**
  * The path to the file used for markdown output.

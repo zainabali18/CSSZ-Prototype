@@ -32,17 +32,17 @@ jobs:
       - name: Compile TypeScript sources
         uses: ./.github/actions/build
 
-      - name: Delete existing groups.json
+      - name: Delete existing groups.yaml
         if: github.event_name == 'workflow_run'
         run: |
           echo "${{ toJson(github.event.workflow_run) }}"
-          rm ./config/groups.json
+          rm ./config/groups.yaml
 
       - name: Download PR artifact
         if: github.event_name == 'workflow_run'
         uses: actions/download-artifact@v4
         with:
-          name: groups.json
+          name: groups.yaml
           path: ./config/
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}

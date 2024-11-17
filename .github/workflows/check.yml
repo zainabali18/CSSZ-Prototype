@@ -23,5 +23,5 @@ jobs:
       - name: Upload configuration as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: groups.json
-          path: ./config/groups.json
+          name: groups.yaml
+          path: ./config/groups.yaml

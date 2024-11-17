@@ -3,6 +3,7 @@ import { makeCanvasRequest } from "./canvas";
 import * as fs from "fs";
 import { StudentsByCanvasId } from "./students";
 import { GROUP_CONFIG_FILE } from "./const";
+import * as yaml from "yaml";
 
 /**
  * Represents information about a group that is shared between
@@ -44,7 +45,7 @@ export interface GroupsById<T extends BaseGroup> {
 
 /** Reads the local group configuration file. */
 export async function readGroups(): Promise<GroupSpecification[]> {
-  const groups: GroupSpecification[] = JSON.parse(
+  const groups: GroupSpecification[] = yaml.parse(
     fs.readFileSync(GROUP_CONFIG_FILE, "utf-8")
   );
 
