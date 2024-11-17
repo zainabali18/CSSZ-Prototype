@@ -3,6 +3,7 @@
   "main": "lib/validate.js",
   "scripts": {
     "build": "npx tsc",
+    "check": "node ./lib/check.js",
     "validate": "node ./lib/validate.js"
   },
   "devDependencies": {
