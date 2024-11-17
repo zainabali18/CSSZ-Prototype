@@ -1,4 +1,5 @@
 import { PROTOTYPE_GROUPS_CATEGORY, SEPP_COURSE } from "./const";
+import { Events, makeEmptyActions, writeMarkdown } from "./event";
 import {
   CanvasGroup,
   getCourseGroups,
@@ -14,6 +15,7 @@ import {
   restoreIdMapping,
 } from "./students";
 
+let events: Events = makeEmptyActions();
 let students: CourseStudents;
 let prototypeGroups: GroupsById<CanvasGroup>;
 
@@ -32,7 +34,11 @@ async function validateExistingGroup(configGroup: GroupSpecification) {
           `Name needs to be changed from ${matchingGroup.name} to ${configGroup.name}`
         );
 
-        // TODO: update name
+        events.groupsToUpdate.push({
+          group: matchingGroup.id,
+          newName: configGroup.name,
+          oldName: matchingGroup.name,
+        });
       }
 
       // Check which members need to be added to the group, based on which students are
@@ -54,6 +60,10 @@ async function validateExistingGroup(configGroup: GroupSpecification) {
             console.log(
               `Student ${member} (${canvasId}) is a member in the configuration file, but not on Canvas.`
             );
+            events.membersToAdd.push({
+              group: matchingGroup.id,
+              member: { id: canvasId, sis_user_id: member },
+            });
           }
         }
       });
@@ -76,6 +86,10 @@ async function validateExistingGroup(configGroup: GroupSpecification) {
             console.log(
               `Student ${id} (${canvasMember}) needs to be removed from the group on Canvas.`
             );
+            events.membersToRemove.push({
+              group: matchingGroup.id,
+              member: { id: Number(canvasMember), sis_user_id: id },
+            });
           }
         }
       });
@@ -87,6 +101,13 @@ async function validateExistingGroup(configGroup: GroupSpecification) {
   } else {
     // create group
     console.log(`Group ${configGroup.name} does not exist yet.`);
+
+    events.groupsToCreate.push({
+      name: configGroup.name,
+      members: configGroup.members.map((member) => {
+        return { id: students.byId[member], sis_user_id: member };
+      }),
+    });
   }
 }
 
@@ -113,6 +134,8 @@ async function runWrapper() {
   );
 
   configGroups.forEach(validateExistingGroup);
+
+  writeMarkdown(events);
 }
 
 runWrapper();
