@@ -133,7 +133,9 @@ async function runWrapper() {
     `Found ${Object.keys(prototypeGroups).length} group(s) on Canvas.`
   );
 
-  configGroups.forEach(validateExistingGroup);
+  for (let index = 0; index < configGroups.length; index++) {
+    await validateExistingGroup(configGroups[index]);
+  }
 
   // Write a summary of the changes as markdown, if there are any changes.
   if (
