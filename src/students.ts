@@ -20,13 +20,19 @@ export interface StudentsById {
   [index: string]: number;
 }
 
-/** Represents information about a student returned by Canvas. */
-export interface Student {
+/** Represents IDs a student returned by Canvas will have. */
+export interface StudentIDs {
+  /** Canvas' own ID for the student. */
   id: number;
+  /** The ID of the student used across systems. */
+  sis_user_id: string;
+}
+
+/** Represents information about a student returned by Canvas. */
+export interface Student extends StudentIDs {
   name: string;
   sortable_name: string;
   short_name: string;
-  sis_user_id: string;
 }
 
 /**
