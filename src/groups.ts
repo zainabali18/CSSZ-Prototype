@@ -98,3 +98,24 @@ export async function getGroupMembers(id: number): Promise<StudentsByCanvasId> {
   return result;
 }
 
+/**
+ * Creates a new group.
+ *
+ * @param category The ID of the category under which the group should be created.
+ * @param name The name of the new group.
+ * @returns Returns information about the new group.
+ */
+export async function createGroup(
+  category: number,
+  name: string
+): Promise<CanvasGroup> {
+  const data = new URLSearchParams();
+  data.append("name", name);
+
+  const request = makeCanvasRequest(
+    `group_categories/${category}/groups`,
+    data
+  );
+  const response = await fetch(request);
+  return response.json();
+}
