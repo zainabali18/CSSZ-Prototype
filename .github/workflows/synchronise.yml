@@ -1,6 +1,10 @@
 name: "Prototype Groups"
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Check"]
+    types:
+      - completed
   push:
     branches:
       - main
@@ -16,6 +20,17 @@ jobs:
 
       - name: Compile TypeScript sources
         uses: ./.github/actions/build
+
+      - name: Delete existing groups.json
+        if: github.event_name == 'workflow_run'
+        run: rm ./config/groups.json
+
+      - name: Download PR artifact
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: groups.json
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Validate configuration
         run: npm run validate

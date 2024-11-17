@@ -1,9 +1,6 @@
 name: "Check"
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -22,3 +19,9 @@ jobs:
 
       - name: Run checks
         run: npm run check
+
+      - name: Upload configuration as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: groups.json
+          path: ./config/groups.json
