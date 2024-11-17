@@ -51,3 +51,22 @@ jobs:
         run: npm run validate
         env:
           CANVAS_TOKEN: ${{ secrets.CANVAS_TOKEN }}
+
+      - name: "Post changes as PR comment"
+        if: github.event_name == 'workflow_run'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            let fs = require('fs');
+            let markdown = 'changes.md';
+            let issue_number = ${{ github.event.workflow_run.pull_requests[0].id }};
+
+            if (fs.existsSync(markdown)) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue_number,
+                body: fs.readFileSync('changes.md', 'utf-8')
+              });
+            }
