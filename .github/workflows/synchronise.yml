@@ -44,7 +44,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Format groups.yaml
-        run: npm run format-config
+        run: |
+          git add config/groups.yaml
+          git commit -m 'Temporary commit'
+          npm run format-config
 
       - name: Check for changes
         env:
@@ -52,9 +55,9 @@ jobs:
         run: |
           if [ ! -z "$(git status --porcelain)" ]; then
             echo \
-              "Running `npm run format-config` changed the formatting of `groups.yaml`:\n\n" \
-              "```diff\n$(git diff)\n```\n\n" \
-              "Please run `npm run format-config` locally and commit the changes." | gh pr comment --body-file - ${{ github.event.workflow_run.pull_requests[0].number }}
+              'Running \`npm run format-config\` changed the formatting of \`groups.yaml\`:\n\n\`\`\`diff\n' \
+              "$(git diff)\n" \
+              '\`\`\`\n\nPlease run \`npm run format-config\` locally and commit the changes.' | gh pr comment --body-file - ${{ github.event.workflow_run.pull_requests[0].number }}
           fi
 
       - name: Validate configuration
