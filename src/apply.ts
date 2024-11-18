@@ -13,6 +13,11 @@ async function runWrapper() {
       const event = events.groupsToCreate[index];
       const group = await createGroup(PROTOTYPE_GROUPS_CATEGORY, event.name);
       event.specification.id = group.id;
+
+      for (let j = 0; j < event.members.length; j++) {
+        const memberToAdd = event.members[j];
+        const result = await addToGroup(group.id, memberToAdd.id);
+      }
     }
 
     writeFileSync(
