@@ -30,6 +30,16 @@ async function validateExistingGroup(
   }
   info.groupNames.add(configGroup.name);
 
+  // Check that the members of this group don't already belong to another.
+  for (let index = 0; index < configGroup.members.length; index++) {
+    const member = configGroup.members[index];
+
+    if (info.allocatedStudents.has(member)) {
+      throw new Error(`Student '${member}' is assigned to multiple groups.`);
+    }
+    info.allocatedStudents.add(member);
+  }
+
   if (configGroup.id !== undefined) {
     const matchingGroup = prototypeGroups[configGroup.id];
 
@@ -125,6 +135,7 @@ async function validateExistingGroup(
 export interface SynchroniseInfo {
   events: Events;
   configGroups: GroupSpecification[];
+  allocatedStudents: Set<string>;
   groupNames: Set<string>;
 }
 
@@ -132,6 +143,7 @@ export async function synchronise(): Promise<SynchroniseInfo> {
   const results: SynchroniseInfo = {
     events: makeEmptyActions(),
     configGroups: await readGroups(),
+    allocatedStudents: new Set(),
     groupNames: new Set(),
   };
 
