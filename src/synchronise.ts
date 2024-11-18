@@ -19,7 +19,7 @@ let students: CourseStudents;
 let prototypeGroups: GroupsById<CanvasGroup>;
 
 async function validateExistingGroup(
-  events: Events,
+  info: SynchroniseInfo,
   configGroup: GroupSpecification,
 ) {
   if (configGroup.id !== undefined) {
@@ -36,7 +36,7 @@ async function validateExistingGroup(
           `Name needs to be changed from ${matchingGroup.name} to ${configGroup.name}`,
         );
 
-        events.groupsToUpdate.push({
+        info.events.groupsToUpdate.push({
           group: matchingGroup.id,
           newName: configGroup.name,
           oldName: matchingGroup.name,
@@ -62,7 +62,7 @@ async function validateExistingGroup(
             console.log(
               `Student ${member} (${canvasId}) is a member in the configuration file, but not on Canvas.`,
             );
-            events.membersToAdd.push({
+            info.events.membersToAdd.push({
               group: matchingGroup.id,
               member: { id: canvasId, sis_user_id: member },
             });
@@ -88,7 +88,7 @@ async function validateExistingGroup(
             console.log(
               `Student ${id} (${canvasMember}) needs to be removed from the group on Canvas.`,
             );
-            events.membersToRemove.push({
+            info.events.membersToRemove.push({
               group: matchingGroup.id,
               member: { id: Number(canvasMember), sis_user_id: id },
             });
@@ -104,7 +104,7 @@ async function validateExistingGroup(
     // create group
     console.log(`Group ${configGroup.name} does not exist yet.`);
 
-    events.groupsToCreate.push({
+    info.events.groupsToCreate.push({
       specification: configGroup,
       name: configGroup.name,
       members: configGroup.members.map((member) => {
@@ -151,7 +151,7 @@ export async function synchronise(): Promise<SynchroniseInfo> {
   );
 
   for (let index = 0; index < results.configGroups.length; index++) {
-    await validateExistingGroup(results.events, results.configGroups[index]);
+    await validateExistingGroup(results, results.configGroups[index]);
   }
 
   return results;
