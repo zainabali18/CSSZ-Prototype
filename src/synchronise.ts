@@ -22,6 +22,14 @@ async function validateExistingGroup(
   info: SynchroniseInfo,
   configGroup: GroupSpecification,
 ) {
+  // Ensure that there is only one group with a given name.
+  if (info.groupNames.has(configGroup.name)) {
+    throw new Error(
+      `There are multiple groups named '${configGroup.name}' in the configuration.`,
+    );
+  }
+  info.groupNames.add(configGroup.name);
+
   if (configGroup.id !== undefined) {
     const matchingGroup = prototypeGroups[configGroup.id];
 
@@ -117,12 +125,14 @@ async function validateExistingGroup(
 export interface SynchroniseInfo {
   events: Events;
   configGroups: GroupSpecification[];
+  groupNames: Set<string>;
 }
 
 export async function synchronise(): Promise<SynchroniseInfo> {
   const results: SynchroniseInfo = {
     events: makeEmptyActions(),
     configGroups: await readGroups(),
+    groupNames: new Set(),
   };
 
   if (results.configGroups === null) {
