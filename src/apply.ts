@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { GROUP_CONFIG_FILE, PROTOTYPE_GROUPS_CATEGORY } from "./const";
-import { createGroup, readGroups } from "./groups";
+import { addToGroup, createGroup, readGroups } from "./groups";
 import { synchronise } from "./synchronise";
 import * as yaml from "yaml";
 
@@ -23,6 +23,11 @@ async function runWrapper() {
         defaultKeyType: "PLAIN",
       }),
     );
+
+    for (let index = 0; index < events.membersToAdd.length; index++) {
+      const event = events.membersToAdd[index];
+      const result = await addToGroup(event.group, event.member.id);
+    }
   } catch (err) {
     console.error(`Failed to read actions from file: ${err}`);
     process.exit(1);

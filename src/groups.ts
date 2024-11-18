@@ -120,3 +120,32 @@ export async function createGroup(
   const response = await fetch(request);
   return response.json();
 }
+
+export interface AddToGroupResult {
+  id: number;
+  group_id: number;
+  workflow_state: string;
+  created_at: string;
+  user_id: number;
+  moderator: boolean;
+  just_created: boolean;
+}
+
+/**
+ * Add a member to a group.
+ *
+ * @param group The ID of the group.
+ * @param student The ID of the student to add.
+ * @returns Returns information about the outcome of the request.
+ */
+export async function addToGroup(
+  group: number,
+  student: number,
+): Promise<AddToGroupResult> {
+  const data = new URLSearchParams();
+  data.append("user_id", student.toString());
+
+  const request = makeCanvasRequest(`groups/${group}/memberships`, data);
+  const response = await fetch(request);
+  return response.json();
+}
