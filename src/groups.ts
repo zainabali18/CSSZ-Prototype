@@ -19,7 +19,7 @@ export interface BaseGroup {
  */
 export interface CanvasGroup extends BaseGroup {
   id: number;
-  join_level: "parent_context_auto_join";
+  join_level: "parent_context_auto_join" | "invitation_only";
   group_category_id: number;
   members_count: number;
   context_type: string;
@@ -117,6 +117,24 @@ export async function createGroup(
     `group_categories/${category}/groups`,
     data,
   );
+  const response = await fetch(request);
+  return response.json();
+}
+
+/**
+ * Edits the specified group.
+ * @param group The ID of the group to edit.
+ * @param name The new name for the group.
+ * @returns Returns information about the group.
+ */
+export async function editGroup(
+  group: number,
+  name: string,
+): Promise<CanvasGroup> {
+  const data = new URLSearchParams();
+  data.append("name", name);
+
+  const request = makeCanvasRequest(`groups/${group}`, data, "PUT");
   const response = await fetch(request);
   return response.json();
 }

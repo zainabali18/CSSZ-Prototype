@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { GROUP_CONFIG_FILE, PROTOTYPE_GROUPS_CATEGORY } from "./const";
-import { addToGroup, createGroup, readGroups } from "./groups";
+import { addToGroup, createGroup, editGroup, readGroups } from "./groups";
 import { synchronise } from "./synchronise";
 import * as yaml from "yaml";
 
@@ -23,6 +23,11 @@ async function runWrapper() {
         defaultKeyType: "PLAIN",
       }),
     );
+
+    for (let index = 0; index < events.groupsToUpdate.length; index++) {
+      const event = events.groupsToUpdate[index];
+      const result = await editGroup(event.group, event.newName);
+    }
 
     for (let index = 0; index < events.membersToAdd.length; index++) {
       const event = events.membersToAdd[index];
