@@ -15,7 +15,14 @@ async function runWrapper() {
       event.specification.id = group.id;
     }
 
-    writeFileSync(GROUP_CONFIG_FILE, yaml.stringify(results.configGroups));
+    writeFileSync(
+      GROUP_CONFIG_FILE,
+      yaml.stringify(results.configGroups, {
+        collectionStyle: "block",
+        defaultStringType: "QUOTE_DOUBLE",
+        defaultKeyType: "PLAIN",
+      }),
+    );
   } catch (err) {
     console.error(`Failed to read actions from file: ${err}`);
     process.exit(1);
