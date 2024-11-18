@@ -1,6 +1,6 @@
 # The Prototype - Groups (2024)
 
-This repository is used to manage the groups for "The Prototype" assignment. All groups are stored in the [./config/groups.yaml](`./config/groups.yaml` file).
+This repository is used to manage the groups for "The Prototype" assignment. All groups are stored in the [`./config/groups.yaml` file](config/groups.yaml).
 
 ## Adding your group
 
