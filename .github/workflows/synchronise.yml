@@ -90,7 +90,7 @@ jobs:
           script: |
             let fs = require('fs');
             let markdown = 'changes.md';
-            let issue_number = Number(fs.readFileSync(${{ steps.pr.outputs.NUMBER }}, 'utf-8'));
+            let issue_number = ${{ steps.pr.outputs.NUMBER }};
 
             if (fs.existsSync(markdown)) {
               await github.rest.issues.createComment({
