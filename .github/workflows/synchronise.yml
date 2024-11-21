@@ -86,8 +86,8 @@ jobs:
         run: |
           ls -la
           git fetch origin main:refs/remotes/origin/main
-          git diff origin/main >> ./config/main.diff
-          cat ./config/main.diff
+          git diff origin/main config/groups.yaml >> ../config/main.diff
+          cat ../config/main.diff
 
       - name: Get PR info
         id: pr
