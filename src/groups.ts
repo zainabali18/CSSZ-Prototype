@@ -44,9 +44,11 @@ export interface GroupsById<T extends BaseGroup> {
 }
 
 /** Reads the local group configuration file. */
-export async function readGroups(): Promise<GroupSpecification[]> {
+export async function readGroups(
+  path: string = GROUP_CONFIG_FILE,
+): Promise<GroupSpecification[]> {
   const groups: GroupSpecification[] = yaml.parse(
-    fs.readFileSync(GROUP_CONFIG_FILE, "utf-8"),
+    fs.readFileSync(path, "utf-8"),
   );
 
   return groups;
