@@ -50,7 +50,9 @@ jobs:
         run: |
           gh api --method POST /repos/uob-sepp/groups-2024/statuses/${{ steps.commit.outputs.SHA }} \
             -f state='pending' \
-            -f target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+            -f target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            -f description='Validate group changes'
+            -f context='canvas/validate'
 
       - name: Clone repository
         uses: actions/checkout@v4
@@ -68,6 +70,15 @@ jobs:
           path: ./config/
           run-id: ${{ inputs.workflow_id || github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get PR info
+        id: pr
+        run: |
+          NUMBER=$(cat ./config/pr.yaml)
+          echo "NUMBER=$NUMBER" >> $GITHUB_OUTPUT
+
+          SHA=$(gh pr view $NUMBER --json headRefOid | jq -r '.headRefOid')
+          echo "SHA=$SHA" >> $GITHUB_OUTPUT
 
       # - name: Format groups.yaml
       #   run: |
@@ -111,3 +122,24 @@ jobs:
                 body: fs.readFileSync('changes.md', 'utf-8')
               });
             }
+
+      - name: Set workflow status as 'success'
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh api --method POST /repos/uob-sepp/groups-2024/statuses/${{ steps.commit.outputs.SHA }} \
+            -f state='success' \
+            -f target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            -f description='Validate group changes'
+            -f context='canvas/validate'
+
+      - name: Set workflow status as 'failure'
+        if: failure()
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          gh api --method POST /repos/uob-sepp/groups-2024/statuses/${{ steps.commit.outputs.SHA }} \
+            -f state='failure' \
+            -f target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
+            -f description='Validate group changes'
+            -f context='canvas/validate'
