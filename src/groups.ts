@@ -53,6 +53,26 @@ export async function readGroups(): Promise<GroupSpecification[]> {
 }
 
 /**
+ * Writes the local group configuration file.
+ *
+ * @param path The path of the file to write.
+ * @param groups The groups to write to the file.
+ */
+export async function writeGroups(
+  path: string,
+  groups: GroupSpecification[],
+): Promise<void> {
+  fs.writeFileSync(
+    path,
+    yaml.stringify(groups, {
+      collectionStyle: "block",
+      defaultStringType: "QUOTE_DOUBLE",
+      defaultKeyType: "PLAIN",
+    }),
+  );
+}
+
+/**
  * Fetches the groups for the specified course from Canvas.
  *
  * @param course The ID of the course to fetch groups for.
