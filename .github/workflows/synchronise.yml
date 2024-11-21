@@ -85,6 +85,7 @@ jobs:
         working-directory: pr
         run: |
           ls -la
+          git fetch origin main:refs/remotes/origin/main
           git diff origin/main >> ./config/main.diff
           cat ./config/main.diff
 
