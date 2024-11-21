@@ -1,6 +1,10 @@
 name: "Prototype Groups"
 on:
   workflow_dispatch:
+    inputs:
+      workflow_id:
+        required: true
+        type: number
   workflow_run:
     workflows: ["Check"]
     types:
@@ -26,16 +30,14 @@ jobs:
         uses: ./.github/actions/build
 
       - name: Delete existing groups.yaml
-        run: |
-          echo "${{ toJson(github.event.workflow_run) }}"
-          rm ./config/groups.yaml
+        run: rm ./config/groups.yaml
 
       - name: Download PR artifact
         uses: actions/download-artifact@v4
         with:
           name: groups.yaml
           path: ./config/
-          run-id: ${{ github.event.workflow_run.id }}
+          run-id: ${{ inputs.workflow_id || github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # - name: Format groups.yaml
