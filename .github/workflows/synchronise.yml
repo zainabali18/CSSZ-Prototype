@@ -51,8 +51,8 @@ jobs:
           gh api --method POST /repos/uob-sepp/groups-2024/statuses/${{ steps.commit.outputs.SHA }} \
             -f state='pending' \
             -f target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
-            -f description='Validate group changes'
-            -f context='canvas/validate'
+            -f description='Validating changes to groups...' \
+            -f context='Validate / Groups'
 
       - name: Clone repository
         uses: actions/checkout@v4
@@ -130,8 +130,8 @@ jobs:
           gh api --method POST /repos/uob-sepp/groups-2024/statuses/${{ steps.commit.outputs.SHA }} \
             -f state='success' \
             -f target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
-            -f description='Validate group changes'
-            -f context='canvas/validate'
+            -f description='Successful' \
+            -f context='Validate / Groups'
 
       - name: Set workflow status as 'failure'
         if: failure()
@@ -141,5 +141,5 @@ jobs:
           gh api --method POST /repos/uob-sepp/groups-2024/statuses/${{ steps.commit.outputs.SHA }} \
             -f state='failure' \
             -f target_url='${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}' \
-            -f description='Validate group changes'
-            -f context='canvas/validate'
+            -f description='Failed' \
+            -f context='Validate / Groups'
