@@ -77,8 +77,20 @@ jobs:
           NUMBER=$(cat ./config/pr.yaml)
           echo "NUMBER=$NUMBER" >> $GITHUB_OUTPUT
 
-          SHA=$(gh pr view $NUMBER --json headRefOid | jq -r '.headRefOid')
-          echo "SHA=$SHA" >> $GITHUB_OUTPUT
+      - name: Checkout PR's groups.yaml
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.commit.outputs.SHA }}
+          path: pr
+          sparse-checkout: |
+            config/groups.yaml
+
+      - name: Calculate diff
+        working-directory: pr
+        run: |
+          ls -la
+          git diff origin/main >> ./config/main.diff
+          cat ./config/main.diff
 
       # - name: Format groups.yaml
       #   run: |
