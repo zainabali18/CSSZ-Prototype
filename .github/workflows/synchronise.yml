@@ -5,6 +5,10 @@ on:
       workflow_id:
         required: true
         type: number
+      post_comment:
+        required: false
+        type: boolean
+        default: true
   workflow_run:
     workflows: ["Check"]
     types:
@@ -91,6 +95,7 @@ jobs:
 
       - name: "Post changes as PR comment"
         uses: actions/github-script@v6
+        if: github.event_name == 'workflow_run' || inputs.post_comment
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
