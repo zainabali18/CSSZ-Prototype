@@ -10,7 +10,7 @@ jobs:
   update:
     name: "Update"
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.repository_owner == 'uob-sepp'
 
     concurrency:
       group: "canvas-update"
