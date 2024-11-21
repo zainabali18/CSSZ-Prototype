@@ -25,7 +25,8 @@ jobs:
 
       - name: Calculate diff
         run: |
-          git diff origin/main >> ./config/main.diff
+          git fetch origin main:refs/remotes/origin/main
+          git diff origin/main ./config/groups.yaml >> ./config/main.diff
           cat ./config/main.diff
 
       - name: Upload configuration as artifact
