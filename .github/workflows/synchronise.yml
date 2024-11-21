@@ -79,6 +79,7 @@ jobs:
           sparse-checkout: |
             config/groups.yaml
           sparse-checkout-cone-mode: false
+          fetch-depth: 2
 
       - name: Calculate diff
         working-directory: pr
