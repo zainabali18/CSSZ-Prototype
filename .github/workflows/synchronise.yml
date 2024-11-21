@@ -30,7 +30,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          SHA=$(gh run view ${{ inputs.workflow_id || github.event.workflow_run.id }} --json headSha | jq -r '.headSha')
+          SHA=$(gh run view ${{ inputs.workflow_id || github.event.workflow_run.id }} --repo ${{ github.repository }} --json headSha | jq -r '.headSha')
           echo "SHA=$SHA" >> $GITHUB_OUTPUT
 
       - name: Get token for sepp-bot
