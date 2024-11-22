@@ -77,7 +77,7 @@ jobs:
       - name: Apply PR diff
         run: |
           cat ./pr/main.diff
-          git apply main.diff
+          git apply ./pr/main.diff
 
       - name: Validate configuration
         run: npm run validate
