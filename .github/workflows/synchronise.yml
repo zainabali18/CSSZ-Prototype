@@ -74,13 +74,10 @@ jobs:
           NUMBER=$(cat ./pr/pr.yaml)
           echo "NUMBER=$NUMBER" >> $GITHUB_OUTPUT
 
-      - name: Get PR diff
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Apply PR diff
         run: |
-          gh pr diff ${{ steps.pr.outputs.NUMBER }} > pr.diff
-          cat pr.diff
-          gh apply pr.diff
+          cat ./pr/main.diff
+          git apply main.diff
 
       - name: Validate configuration
         run: npm run validate
