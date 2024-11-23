@@ -11,7 +11,11 @@ type StudentID = string;
  * Represents a mapping of Canvas IDs to SIS IDs, and vice-versa.
  */
 export interface CourseStudents {
+  /** All SIS IDs. */
+  ids: StudentID[];
+  /** Maps Canvas IDs to SIS IDs. */
   byCanvasId: StudentsByCanvasId;
+  /** Maps SIS IDs to Canvas IDs. */
   byId: StudentsById;
 }
 
@@ -51,11 +55,13 @@ export async function getStudents(course: number): Promise<CourseStudents> {
   const response = await fetch(request);
   const data: Student[] = await response.json();
   const result: CourseStudents = {
+    ids: [],
     byCanvasId: {},
     byId: {},
   };
 
   data.forEach((student) => {
+    result.ids.push(student.sis_user_id);
     result.byCanvasId[student.id] = student.sis_user_id;
     result.byId[student.sis_user_id] = student.id;
   });
