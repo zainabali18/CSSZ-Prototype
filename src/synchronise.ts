@@ -4,6 +4,7 @@ import {
   CanvasGroup,
   getCourseGroups,
   getGroupMembers,
+  GroupsByCategory,
   GroupsById,
   GroupSpecification,
   readGroups,
@@ -149,7 +150,9 @@ export interface SynchroniseInfo {
   groupIds: Set<number>;
 }
 
-export async function synchronise(): Promise<SynchroniseInfo> {
+export async function synchronise(
+  canvasGroups?: GroupsByCategory<CanvasGroup>,
+): Promise<SynchroniseInfo> {
   const module = await getModuleInfo();
   const results: SynchroniseInfo = {
     module,
@@ -169,8 +172,11 @@ export async function synchronise(): Promise<SynchroniseInfo> {
     `Found ${results.configGroups.length} group(s) in the local configuration file.`,
   );
 
-  const groups = await getCourseGroups(SEPP_COURSE);
-  prototypeGroups = groups[PROTOTYPE_GROUPS_CATEGORY];
+  if (canvasGroups === undefined) {
+    canvasGroups = await getCourseGroups(SEPP_COURSE);
+  }
+
+  prototypeGroups = canvasGroups[PROTOTYPE_GROUPS_CATEGORY];
   const canvasGroupCount = Object.keys(prototypeGroups).length;
 
   console.log(`Found ${canvasGroupCount} group(s) on Canvas.`);
