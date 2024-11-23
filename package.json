@@ -7,6 +7,7 @@
     "validate": "node ./lib/validate.js",
     "apply": "node ./lib/apply.js",
     "unallocated": "node ./lib/unallocated.js",
+    "cleanup": "node ./lib/cleanup.js",
     "format-config": "npx prettier --write \"config/*.yaml\""
   },
   "devDependencies": {
