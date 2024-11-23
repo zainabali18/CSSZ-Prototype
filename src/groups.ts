@@ -196,3 +196,23 @@ export async function addToGroup(
   const response = await fetch(request);
   return response.json();
 }
+
+/**
+ * Remove a member from a group.
+ *
+ * @param group The group from which to remove the user from.
+ * @param student The user to remove.
+ * @returns
+ */
+export async function removeFromGroup(
+  group: number,
+  student: number,
+): Promise<any> {
+  const request = makeCanvasRequest(
+    `groups/${group}/users/${student}`,
+    undefined,
+    "DELETE",
+  );
+  const response = await fetch(request);
+  return response.json();
+}
