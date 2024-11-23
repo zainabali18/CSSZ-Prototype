@@ -22,6 +22,15 @@ async function validateExistingGroup(
   info: SynchroniseInfo,
   configGroup: GroupSpecification,
 ) {
+  if (configGroup.id !== undefined) {
+    if (info.groupIds.has(configGroup.id)) {
+      throw new Error(
+        `There are multiple groups with the same Canvas ID '${configGroup.id}'.`,
+      );
+    }
+    info.groupIds.add(configGroup.id);
+  }
+
   // Ensure that there is only one group with a given name.
   if (info.groupNames.has(configGroup.name)) {
     throw new Error(
@@ -141,6 +150,7 @@ export interface SynchroniseInfo {
   configGroups: GroupSpecification[];
   allocatedStudents: Set<string>;
   groupNames: Set<string>;
+  groupIds: Set<number>;
 }
 
 export async function synchronise(): Promise<SynchroniseInfo> {
@@ -149,6 +159,7 @@ export async function synchronise(): Promise<SynchroniseInfo> {
     configGroups: await readGroups(),
     allocatedStudents: new Set(),
     groupNames: new Set(),
+    groupIds: new Set(),
   };
 
   if (results.configGroups === null) {
@@ -172,13 +183,23 @@ export async function synchronise(): Promise<SynchroniseInfo> {
   );
   const groups = await getCourseGroups(SEPP_COURSE);
   prototypeGroups = groups[PROTOTYPE_GROUPS_CATEGORY];
-  console.log(
-    `Found ${Object.keys(prototypeGroups).length} group(s) on Canvas.`,
-  );
+  const canvasGroupCount = Object.keys(prototypeGroups).length;
+
+  console.log(`Found ${canvasGroupCount} group(s) on Canvas.`);
 
   for (let index = 0; index < results.configGroups.length; index++) {
     await validateExistingGroup(results, results.configGroups[index]);
   }
+
+  Object.keys(prototypeGroups).forEach((canvasKey) => {
+    const id = Number(canvasKey);
+    if (!results.groupIds.has(id)) {
+      const group = prototypeGroups[id];
+      console.warn(
+        `Canvas group '${group.name}' '${id}' does not exist in the local configuration!`,
+      );
+    }
+  });
 
   return results;
 }
