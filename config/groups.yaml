@@ -361,6 +361,15 @@
     - "2629480"
     - "2605148"
   id: 189991
+# existing groups...
+
+- name: "HESS - S, S, A, T"
+  members:
+    - "2582541"
+    - "2549419"
+    - "2487814"
+    - "2606009"
+    
 - name: "Uturano"
   members:
     - "2885334"
