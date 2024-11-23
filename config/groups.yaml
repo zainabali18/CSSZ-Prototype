@@ -388,88 +388,105 @@
     - "2717382"
     - "2717369"
     - "2717562"
+  id: 190004
 - name: "SEPP - PEM - Please do not join without asking"
   members:
     - "2618508"
     - "2718277"
     - "2590357"
+  id: 190005
 - name: "MYG-SSH-se- group"
   members:
     - "2884893"
     - "2884889"
+  id: 190006
 - name: "SEPP Group csco "
   members:
     - "2441081"
     - "2633724"
+  id: 190007
 - name: "SSH GROUP 3 NOFS"
   members:
     - "2449556"
     - "2517716"
     - "2432191"
     - "2512757"
+  id: 190008
 - name: "SSH"
   members:
     - "2646199"
+  id: 190009
 - name: "SEPP SSH TEAM"
   members:
     - "2609123"
     - "2620610"
     - "2879389"
     - "2839238"
+  id: 190010
 - name: "SEPP Assignment Prototype"
   members:
     - "2629286"
+  id: 190011
 - name: "SSH - Synchronised Ordering System (SOS) "
   members:
     - "2464640"
     - "2547399"
     - "2659061"
     - "2608214"
+  id: 190012
 - name: "Andrew’s group"
   members:
     - "2455558"
     - "2515919"
     - "2582839"
     - "2580405"
+  id: 190013
 - name: "Ahmed, Taqwa, Ali "
   members:
     - "2371003"
     - "2582930"
     - "2549731"
+  id: 190014
 - name: "Rishabs group ( private, dont join if not discussed)"
   members:
     - "2608091"
     - "2642231"
     - "2571852"
     - "2701224"
+  id: 190015
 - name: "CSSZ "
   members:
     - "2539903"
     - "2537036"
     - "2339077"
     - "2722408"
+  id: 190016
 - name: "SSH group - dxb"
   members:
     - "2661358"
     - "2642851"
     - "2698096"
     - "2717009"
+  id: 190017
 - name: "SSH - ASA"
   members:
     - "2683248"
     - "2648887"
     - "2720323"
+  id: 190018
 - name: "ssh 101"
   members:
     - "2567994"
     - "2574305"
     - "2584128"
     - "2717403"
+  id: 190019
 - name: "ssh 1"
   members:
     - "2524581"
     - "2550936"
     - "2717402"
+  id: 190020
 - name: "protohype"
   members:
     - "2590646"
@@ -477,26 +494,31 @@
     - "2585623"
     - "2614869"
     - "2560422"
+  id: 190021
 - name: "SEPP Prototype Group"
   members:
     - "2674798"
     - "2566836"
     - "2580474"
     - "2688876"
+  id: 190022
 - name: "Max's team -SSH"
   members:
     - "2528766"
     - "2394038"
     - "2840220"
+  id: 190023
 - name: "Imagine bugging"
   members:
     - "2086965"
     - "2468442"
     - "2585937"
     - "2633519"
+  id: 190024
 - name: "Riz"
   members:
     - "2375806"
     - "2301021"
     - "2428040"
     - "2475521"
+  id: 190025
