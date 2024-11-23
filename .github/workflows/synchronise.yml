@@ -84,6 +84,8 @@ jobs:
           git apply ./pr/main.diff
 
       - name: Check that PR is mergeable
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           STATUS=$(gh pr view ${{ steps.pr.outputs.NUMBER }} --json mergeable | jq -r ".mergeable")
 
