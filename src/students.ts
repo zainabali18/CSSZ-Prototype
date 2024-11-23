@@ -19,10 +19,12 @@ export interface CourseStudents {
   byId: StudentsById;
 }
 
-/** Represents a mapping of Canvas IDs to SIS IDs. */
-export interface StudentsByCanvasId {
-  [index: CanvasID]: StudentID;
+export interface ByCanvasId<T> {
+  [index: CanvasID]: T;
 }
+
+/** Represents a mapping of Canvas IDs to SIS IDs. */
+export type StudentsByCanvasId = ByCanvasId<StudentID>;
 
 /** Represents a mapping of SIS IDs to Canvas IDs. */
 export interface StudentsById {
