@@ -8,14 +8,8 @@ import {
   GroupSpecification,
   readGroups,
 } from "./groups";
-import {
-  cacheIdMapping,
-  CourseStudents,
-  getStudents,
-  restoreIdMapping,
-} from "./students";
+import { getModuleInfo, ModuleInfo } from "./module";
 
-let students: CourseStudents;
 let prototypeGroups: GroupsById<CanvasGroup>;
 
 async function validateExistingGroup(
@@ -43,7 +37,7 @@ async function validateExistingGroup(
   for (let index = 0; index < configGroup.members.length; index++) {
     const member = configGroup.members[index];
 
-    if (students.byId[member] === undefined) {
+    if (info.module.students.byId[member] === undefined) {
       throw new Error(`Student '${member}' is not a student on this course.`);
     }
 
@@ -80,7 +74,7 @@ async function validateExistingGroup(
       // console.log(canvasMembers);
 
       configGroup.members.forEach((member) => {
-        const canvasId = students.byId[member];
+        const canvasId = info.module.students.byId[member];
 
         if (canvasId === undefined) {
           console.error(`Unable to retrieve student matching ${member}`);
@@ -102,7 +96,8 @@ async function validateExistingGroup(
       });
 
       Object.keys(canvasMembers).forEach((canvasMember) => {
-        const id = students.byCanvasId[Number.parseInt(canvasMember)];
+        const id =
+          info.module.students.byCanvasId[Number.parseInt(canvasMember)];
 
         if (id === undefined) {
           console.error(`Unable to resolve id of ${canvasMember}`);
@@ -139,13 +134,14 @@ async function validateExistingGroup(
       specification: configGroup,
       name: configGroup.name,
       members: configGroup.members.map((member) => {
-        return { id: students.byId[member], sis_user_id: member };
+        return { id: info.module.students.byId[member], sis_user_id: member };
       }),
     });
   }
 }
 
 export interface SynchroniseInfo {
+  module: ModuleInfo;
   events: Events;
   configGroups: GroupSpecification[];
   allocatedStudents: Set<string>;
@@ -154,7 +150,9 @@ export interface SynchroniseInfo {
 }
 
 export async function synchronise(): Promise<SynchroniseInfo> {
+  const module = await getModuleInfo();
   const results: SynchroniseInfo = {
+    module,
     events: makeEmptyActions(),
     configGroups: await readGroups(),
     allocatedStudents: new Set(),
@@ -171,16 +169,6 @@ export async function synchronise(): Promise<SynchroniseInfo> {
     `Found ${results.configGroups.length} group(s) in the local configuration file.`,
   );
 
-  students = await restoreIdMapping("config/students.json").catch(
-    async (err) => {
-      console.log(`Unable to restore student id mapping: ${err}`);
-
-      console.log("Fetching students from Canvas...");
-      const result = await getStudents(SEPP_COURSE);
-      await cacheIdMapping("config/students.json", result);
-      return result;
-    },
-  );
   const groups = await getCourseGroups(SEPP_COURSE);
   prototypeGroups = groups[PROTOTYPE_GROUPS_CATEGORY];
   const canvasGroupCount = Object.keys(prototypeGroups).length;
