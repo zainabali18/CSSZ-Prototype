@@ -34,6 +34,10 @@ async function validateExistingGroup(
   for (let index = 0; index < configGroup.members.length; index++) {
     const member = configGroup.members[index];
 
+    if (students.byId[member] === undefined) {
+      throw new Error(`Student '${member}' is not a student on this course.`);
+    }
+
     if (info.allocatedStudents.has(member)) {
       throw new Error(`Student '${member}' is assigned to multiple groups.`);
     }
