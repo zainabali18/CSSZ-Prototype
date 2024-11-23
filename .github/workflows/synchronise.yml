@@ -28,6 +28,10 @@ jobs:
       issues: write
       pull-requests: write
 
+    concurrency:
+      group: "validate"
+      cancel-in-progress: false
+
     steps:
       - name: Get commit info
         id: commit
