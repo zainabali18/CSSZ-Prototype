@@ -2,6 +2,11 @@ import fetch from "node-fetch";
 import { makeCanvasRequest } from "./canvas";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 
+/** Canvas IDs are always numeric. */
+type CanvasID = number;
+/** SIS IDs are typically numeric, but are represented as strings. */
+type StudentID = string;
+
 /**
  * Represents a mapping of Canvas IDs to SIS IDs, and vice-versa.
  */
@@ -12,20 +17,20 @@ export interface CourseStudents {
 
 /** Represents a mapping of Canvas IDs to SIS IDs. */
 export interface StudentsByCanvasId {
-  [index: number]: string;
+  [index: CanvasID]: StudentID;
 }
 
 /** Represents a mapping of SIS IDs to Canvas IDs. */
 export interface StudentsById {
-  [index: string]: number;
+  [index: StudentID]: CanvasID;
 }
 
 /** Represents IDs a student returned by Canvas will have. */
 export interface StudentIDs {
   /** Canvas' own ID for the student. */
-  id: number;
+  id: CanvasID;
   /** The ID of the student used across systems. */
-  sis_user_id: string;
+  sis_user_id: StudentID;
 }
 
 /** Represents information about a student returned by Canvas. */
