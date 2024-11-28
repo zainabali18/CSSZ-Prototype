@@ -141,7 +141,6 @@
   id: 189745
 - name: "SSH - Assigned Group 4"
   members:
-    - "2448654"
     - "2644345"
     - "2475559"
     - "2607389"
@@ -202,15 +201,14 @@
 - name: "SSH - Assigned Group 10"
   members:
     - "2000543"
-    - "2602249"
     - "2398180"
+    - "2884899"
   id: 190784
 - name: "SSH - Assigned Group 11"
   members:
     - "2577865"
     - "2596821"
     - "2341923"
-    - "2884899"
   id: 190785
 - name: "SSH 10"
   members:
@@ -590,6 +588,8 @@
   members:
     - "2560422"
     - "2614869"
+    - "2602249"
+    - "2448654"
   id: 190112
 - name: "SEPP Prototype Group"
   members:
