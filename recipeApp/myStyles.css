@@ -1,0 +1,194 @@
+/* General CSS */
+
+html{
+    overflow-x: hidden;
+    width:auto;
+}
+
+/* font used */
+@font-face{font-family: 'poppins';font-style:normal;font-weight:400;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Regular.ttf')
+     format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:400;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Italic.ttf')
+        format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:250;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Thin.ttf')
+            format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:250;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-ThinItalic.ttf')
+                format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:275;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-ExtraLight.ttf')
+                    format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:275;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-ExtraLightItalic.ttf')
+                        format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:300;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Light.ttf')
+                            format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:300;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-LightItalic.ttf')
+                                format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:500;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Medium.ttf')
+                                    format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:500;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-MediumItalic.ttf')
+                                        format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:600;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-SemiBold.ttf')
+                                            format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:600;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-SemiBoldItalic.ttf')
+                                                format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:700;src:local('Poppins'), url('fonts/poppins-cdnfonts/Poppins-Bold.ttf')
+                                                    format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:700;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-BoldItalic.ttf')
+                                                        format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:800;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-ExtraBold.ttf')
+                                                            format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:800;src:local('Poppins'), url('fonts/poppins-cdnfonts/Poppins-ExtraBoldItalic.ttf')
+                                                                format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:900;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Black.ttf')
+                                                                    format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:900;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-BlackItalic.ttf')
+                                                                        format('truetype')
+}
+
+/* text styles */
+
+body{
+    font-family: 'poppins', sans-serif;
+}
+.center {
+    margin: auto;
+    width:fit-content;
+    padding: 10px;
+}
+
+.title_features{
+    position:relative;
+    font-family: poppins!important;
+    font-weight: 500;
+    font-size: 48px;
+    line-height: 53px;
+    letter-spacing: 0.5;
+    color: #121212;
+}
+
+.title_features_position{
+    right:-110px;
+}
+
+
+.navbar-nav.ml-auto {
+    margin-right: 0; /* Ensures no additional right margin */
+}
+
+.footerTextStyle{
+    font-family: poppins!important;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 23px;
+    color: #5A524C;
+}
+
+/* main container of whole page */
+
+.mainContainer{
+    padding-left: 24px;
+    padding-right: 24px;
+    margin-top: 6%;
+    margin-bottom: 5%;
+}
+
+/* Testimonials Section */
+
+.owlTestimonialsContainer {
+    width: 100%; 
+    max-width: 1200px;
+    margin: auto;
+}
+
+.owl-carousel-testimonials .item {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Aligns content to the top */
+    padding: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    background: #fff;
+    border-radius: 5px;
+    min-height: 250px; /* Minimum height to accommodate content */
+    height: 100%; /* Ensures all items stretch to the tallest one's height */
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Space between quote and footer */
+    height: 100%; /* Ensures card body fills the item */
+    padding: 10px;
+}
+
+.card-body blockquote {
+    padding: 10px;
+    font-size: 16px;
+}
+
+.card-body footer {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+
+.card-body cite {
+    font-style: normal;
+    color: #333;
+}
+
+
+/* Footer Icons */
+
+.locationIcon{
+    position: relative;
+}
+
+.locationIcon:before{
+    position: absolute;
+    left:-20px;
+    content:'\f3c5';
+    font-family: 'Font Awesome 6 Pro';
+    font-weight: 900;
+}
+
+.phoneIcon{
+    position: relative;
+}
+
+.phoneIcon:before{
+    position: absolute;
+    left:-20px;
+    content:'\f2a0';
+    font-family: 'Font Awesome 6 Pro';
+    font-weight: 900;
+}
+
+.emailIcon{
+    position: relative;
+}
+
+.emailIcon:before{
+    position: absolute;
+    left:-20px;
+    content:'\f0e0';
+    font-family: 'Font Awesome 6 Pro';
+    font-weight: 900;
+}
+
+.icons{
+    display: flex;
+    justify-content: space-evenly;
+    position: relative;
+    top: 15px;
+}
+
+/*  */
+
+
+
+/* Footer lines */
+
+.footerRow{
+    position:relative;
+}
+.footerRow:before{
+    content: '';
+    width:110%;
+    left:-50px;
+    height:1px;
+    background-color: #9E9E9E;
+    position: absolute;
+    bottom:215px;
+}
+
+.footerRow:after{
+    content: '';
+    width:110%;
+    left:-50px;
+    height:1px;
+    background-color: #9E9E9E;
+    position: absolute;
+    bottom:0px;
+}
