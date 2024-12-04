@@ -9,10 +9,15 @@ import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import RegistrationPage from './pages/RegistrationPage';
+
 import LoginPage from './pages/LoginPage';
+import LogoutPage from './pages/LogoutPage';
+
 import InventoryPage from './pages/InventoryPage';
 import RecipesPage from './pages/RecipesPage';
 import PreferencesPage from './pages/PreferencesPage';
+
+import WelcomePage from './pages/WelcomePage';
 
 import './App.css';
 
@@ -21,8 +26,16 @@ const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const handleLogin = () => setIsLoggedIn(true);
-  const handleLogout = () => setIsLoggedIn(false);
+  const handleLogin = () => {
+    console.log('Logging in...');
+    setIsLoggedIn(true);
+};
+
+const handleLogout = () => {
+    console.log('Logging out...');
+    setIsLoggedIn(false);
+};
+
 
   return (
     <ClerkProvider publishableKey={clerkPubKey}>
@@ -39,6 +52,9 @@ const App = () => {
               <Route path="/about" element={<AboutPage />} />
               <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
               <Route path="/register" element={<RegistrationPage />} />
+              <Route path="/welcome" element={<WelcomePage />} />
+              <Route path="/logout" element={<LogoutPage onLogout={handleLogout} />} />
+              
 
               {/* Private Routes */}
               {isLoggedIn && (

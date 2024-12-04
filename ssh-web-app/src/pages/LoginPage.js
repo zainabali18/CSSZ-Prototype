@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const LoginPage = ({ onLogin }) => {
     const [loginData, setLoginData] = useState({
         email: '',
         password: '',
     });
-    const [isSubmitting, setIsSubmitting] = useState(false); // Tracks form submission state
-    const [errorMessage, setErrorMessage] = useState(''); // Tracks errors for feedback
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
 
-    // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setLoginData((prev) => ({ ...prev, [name]: value }));
     };
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -33,8 +33,8 @@ const LoginPage = () => {
             })
             .then((data) => {
                 alert('Login successful!');
-                console.log('User logged in:', data);
-                // Redirect to dashboard or home page
+                onLogin();
+                navigate('/welcome');
             })
             .catch((error) => {
                 console.error('Error logging in:', error);
@@ -48,7 +48,7 @@ const LoginPage = () => {
     return (
         <div className="container-fluid mainContainer">
             <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-                <h1>Log In</h1>
+                <h1 className="title_features" >Log In</h1>
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: '10px' }}>
                         <label htmlFor="email">Email:</label>

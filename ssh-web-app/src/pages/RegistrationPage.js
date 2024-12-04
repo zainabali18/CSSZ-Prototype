@@ -74,7 +74,7 @@ const RegistrationPage = () => {
     return (
         <div className="container-fluid mainContainer">
             <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-                <h1>Register</h1>
+                <h1 className="title_features">Register</h1>
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: '10px' }}>
                         <label htmlFor="username">Username:</label>

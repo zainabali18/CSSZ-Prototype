@@ -16,12 +16,12 @@ const HomePage = () => {
             <h1 className="subHeading_style title_features_position">Customer Testimonials</h1>
         </div>
 
-        <div class="row">
-            <div class="container owlTestimonialsContainer">
-                <div class="owl-carousel owl-theme owl-carousel-testimonials">
-                    <div class="item">
-                        <div class="container center">
-                            <div class="card-body">
+        <div className="row">
+            <div className="container owlTestimonialsContainer">
+                <div className="owl-carousel owl-theme owl-carousel-testimonials">
+                    <div className="item">
+                        <div className="container center">
+                            <div className="card-body">
                                 <blockquote>
                                     <p>"This app has made it so easy to find recipes that fit my dietary needs. The personalized recipe suggestions are spot on, making meal planning less of a chore and more of a joy "</p>
                                     <p>- Alice Brown</p>
@@ -29,9 +29,9 @@ const HomePage = () => {
                             </div>
                         </div>
                     </div>
-                    <div class="item">
-                        <div class="container center">
-                            <div class="card-body">
+                    <div className="item">
+                        <div className="container center">
+                            <div className="card-body">
                                 <blockquote>
                                     <p>"The ability to set up a vegan dietary profile and get personalized recipe recommendations has made my dietary journey exciting and delicious! Highly recommend SSH to all users."</p>
                                     <p>- David Clark</p>
@@ -39,9 +39,9 @@ const HomePage = () => {
                             </div>
                         </div>
                     </div>
-                    <div class="item">
-                        <div class="container center">
-                            <div class="card-body">
+                    <div className="item">
+                        <div className="container center">
+                            <div className="card-body">
                                 <blockquote>
                                     <p>"The personalized recipes based on my dietary preferences save me so much time. I can prepare quick, healthy meals without having to scour through hundreds of recipes online."</p>
                                     <p>- Emma Lewis</p>
@@ -49,9 +49,9 @@ const HomePage = () => {
                             </div>
                         </div>
                     </div>
-                    <div class="item">
-                        <div class="container center">
-                            <div class="card-body">
+                    <div className="item">
+                        <div className="container center">
+                            <div className="card-body">
                                 <blockquote>
                                     <p>"I've tried many recipe apps, but none compare to the personalization that this one offers. Setting up my dietary profile was so easy  and now I receive recipes that perfectly match my nutritional needs"</p>
                                     <p>- Sarah Johnson</p>
@@ -59,9 +59,9 @@ const HomePage = () => {
                             </div>
                         </div>
                     </div>
-                    <div class="item">
-                        <div class="container center">
-                            <div class="card-body">
+                    <div className="item">
+                        <div className="container center">
+                            <div className="card-body">
                                 <blockquote>
                                     <p>"The notification feature is amazing. I never had any food waste by the end of the week as the App always prompts me with recipes to use ingredients that are nearing their expiration dates."</p>
                                     <footer>- James Wilson</footer>
