@@ -8,7 +8,9 @@
     "apply": "node ./lib/apply.js",
     "unallocated": "node ./lib/unallocated.js",
     "cleanup": "node ./lib/cleanup.js",
-    "format-config": "npx prettier --write \"config/*.yaml\""
+    "format-config": "npx prettier --write \"config/*.yaml\"",
+    "start-server": "node ./server/server.js",
+    "start": "concurrently \"npm run start-server\" \"other commands\""
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
