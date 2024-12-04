@@ -19,15 +19,12 @@ import PreferencesPage from './pages/PreferencesPage';
 
 import WelcomePage from './pages/WelcomePage';
 
-import './App.css';
-
 const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleLogin = () => {
-    console.log('Logging in...');
     setIsLoggedIn(true);
 };
 
