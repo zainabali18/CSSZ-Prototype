@@ -1,16 +1,14 @@
 {
   "type": "commonjs",
   "main": "lib/validate.js",
-  "scripts": {
+ "scripts": {
     "build": "npx tsc",
     "check": "node ./lib/check.js",
     "validate": "node ./lib/validate.js",
     "apply": "node ./lib/apply.js",
     "unallocated": "node ./lib/unallocated.js",
     "cleanup": "node ./lib/cleanup.js",
-    "format-config": "npx prettier --write \"config/*.yaml\"",
-    "start-server": "node ./server/server.js",
-    "start": "concurrently \"npm run start-server\" \"other commands\""
+    "format-config": "npx prettier --write \"config/*.yaml\""
   },
   "devDependencies": {
     "@types/node": "^22.9.0",
