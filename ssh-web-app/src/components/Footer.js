@@ -1,9 +1,19 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebookF, faTwitter, faYoutube, faLinkedin, faInstagram } from '@fortawesome/free-brands-svg-icons';
+import { Link, useNavigate } from 'react-router-dom';
 
+const Footer = ({ isLoggedIn }) => {
+    const navigate = useNavigate();
 
-const Footer = () => {
+    const handleNavigation = (path) => {
+        if (isLoggedIn) {
+            navigate(path); // Navigate to the intended page
+        } else {
+            navigate('/login'); // Redirect to login if not logged in
+        }
+    };
+
     return (
         <footer className="container">
             <div className="row footerRow">
@@ -13,23 +23,59 @@ const Footer = () => {
                 <div className="col-lg-3 col-sm-3">
                     <ul>
                         <div>
-                            <p className="footerTextStyle">About SSH Homes Recipe Recommendation App</p>
+                            <Link to="/about" className="footerTextStyle" style={{ textDecoration: 'none' }}>
+                                About SSH Homes Recipe Recommendation App
+                            </Link>
+                            <p></p>
                         </div>
                         <div>
-                            <p className="footerTextStyle">Recipes</p>
+                            <p
+                                className="footerTextStyle"
+                                onClick={() => handleNavigation('/recipes')}
+                                style={{ cursor: 'pointer'}}
+                            >
+                                Recipes
+                            </p>
                         </div>
                         <div>
-                            <p className="footerTextStyle">Inventory</p>
+                            <p
+                                className="footerTextStyle"
+                                onClick={() => handleNavigation('/inventory')}
+                                style={{ cursor: 'pointer'}}
+                            >
+                                Inventory
+                            </p>
                         </div>
                         <div>
-                            <p className="footerTextStyle">Login/Register</p>
+                            <p
+                                className="footerTextStyle"
+                                onClick={() => handleNavigation('/preferences')}
+                                style={{ cursor: 'pointer'}}
+                            >
+                                Preferences
+                            </p>
                         </div>
                     </ul>
                 </div>
                 <div className="col-lg-2 col-sm-2">
                     <ul>
                         <div>
-                            <p className="footerTextStyle">FAQ</p>
+                            <Link to="/login" className="footerTextStyle" style={{ textDecoration: 'none' }}>
+                                Login
+                            </Link>
+                            <p></p>
+                        </div>
+                        <div>
+                            <Link to="/register" className="footerTextStyle" style={{ textDecoration: 'none' }}>
+                                Register
+                            </Link>
+                            <p></p>
+                        </div>
+                        <div>
+                            <Link to="/faq" className="footerTextStyle" style={{ textDecoration: 'none' }}>
+                                FAQ
+                            </Link>
+                            <p></p>
                         </div>
                         <div>
                             <p className="footerTextStyle">Privacy Policy</p>
