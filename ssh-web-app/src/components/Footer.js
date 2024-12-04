@@ -78,7 +78,10 @@ const Footer = ({ isLoggedIn }) => {
                             <p></p>
                         </div>
                         <div>
-                            <p className="footerTextStyle">Privacy Policy</p>
+                            <Link to="/privacy-policy" className="footerTextStyle" style={{ textDecoration: 'none' }}>
+                                Privacy Policy
+                            </Link>
+                            <p></p>
                         </div>
                     </ul>
                 </div>

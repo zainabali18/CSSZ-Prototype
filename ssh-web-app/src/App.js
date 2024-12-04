@@ -19,6 +19,7 @@ import PreferencesPage from './pages/PreferencesPage';
 
 import WelcomePage from './pages/WelcomePage';
 import FaqPage from './pages/FaqPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY
 
@@ -53,8 +54,8 @@ const handleLogout = () => {
               <Route path="/welcome" element={<WelcomePage />} />
               <Route path="/logout" element={<LogoutPage onLogout={handleLogout} />} />
               <Route path="/faq" element={<FaqPage />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
               
-
               {/* Private Routes */}
               {isLoggedIn && (
                 <>
