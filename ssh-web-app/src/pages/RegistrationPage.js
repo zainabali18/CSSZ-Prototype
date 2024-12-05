@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-const RegistrationPage = () => {
+const RegistrationPage = ({ onLogin }) => {
     const [userData, setUserData] = useState({
         username: '',
         email: '',
         password: '',
     });
-    const [emailAvailable, setEmailAvailable] = useState(null); // Tracks email availability
-    const [isSubmitting, setIsSubmitting] = useState(false); // Tracks form submission state
-    const [errorMessage, setErrorMessage] = useState(''); // Tracks errors for feedback
+    const [emailAvailable, setEmailAvailable] = useState(null); 
+    const [isSubmitting, setIsSubmitting] = useState(false); 
+    const [errorMessage, setErrorMessage] = useState(''); 
+    const navigate = useNavigate();
 
-    // Handle input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUserData((prev) => ({ ...prev, [name]: value }));
@@ -20,12 +21,11 @@ const RegistrationPage = () => {
         }
     };
 
-    // Check if email is available
     const checkEmailAvailability = (email) => {
         fetch(`http://localhost:5001/check-email?email=${email}`)
             .then((response) => response.json())
             .then((data) => {
-                setEmailAvailable(!data.exists); // Email is available if `exists` is false
+                setEmailAvailable(!data.exists); 
                 if (data.exists) {
                     setErrorMessage('Email is already registered.');
                 } else {
@@ -38,7 +38,6 @@ const RegistrationPage = () => {
             });
     };
 
-    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -58,9 +57,9 @@ const RegistrationPage = () => {
                 alert('Registration successful!');
                 console.log('Success:', data);
 
-                // Clear the form after successful registration
-                setUserData({ username: '', email: '', password: '' });
-                setEmailAvailable(null);
+                onLogin(userData.email);
+
+                navigate('/welcome');
             })
             .catch((error) => {
                 console.error('Error registering user:', error);

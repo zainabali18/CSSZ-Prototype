@@ -50,10 +50,9 @@ const App = () => {
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
-              <Route
-                path="/login" element={<LoginPage onLogin={(email) => handleLogin(email)} />}
-              />
-              <Route path="/register" element={<RegistrationPage />} />
+              <Route path="/login" element={<LoginPage onLogin={(email) => handleLogin(email)} />} />
+              <Route path="/register" element={<RegistrationPage onLogin={(email) => handleLogin(email)} />} />
+
               <Route path="/welcome" element={<WelcomePage />} />
               <Route path="/logout" element={<LogoutPage onLogout={handleLogout} />} />
               <Route path="/faq" element={<FaqPage />} />

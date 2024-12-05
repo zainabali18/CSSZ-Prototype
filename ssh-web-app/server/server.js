@@ -23,7 +23,6 @@ const writeDatabase = (data) => {
     fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf-8');
 };
 
-// Endpoint to check if an email exists
 app.get('/check-email', (req, res) => {
     const { email } = req.query;
 
@@ -50,13 +49,11 @@ app.post('/register', (req, res) => {
 
     const database = readDatabase();
 
-    // Check if the email already exists
     const userExists = database.users.some((user) => user.email === email);
     if (userExists) {
         return res.status(400).send({ error: 'User with this email already exists' });
     }
 
-    // Create a new user and add to database
     const newUser = { id: Date.now(), username, email, password, preferences: [] };
     database.users.push(newUser);
     writeDatabase(database);
@@ -81,7 +78,6 @@ app.post('/login', (req, res) => {
     res.status(200).send({ message: 'Login successful', user: { id: user.id, username: user.username, email: user.email } });
 });
 
-// Endpoint to get user preferences
 app.get('/preferences', (req, res) => {
     const { email } = req.query;
 
@@ -89,15 +85,40 @@ app.get('/preferences', (req, res) => {
         return res.status(400).send({ error: 'Email is required' });
     }
 
-    const database = readDatabase();
-    const user = database.users.find((user) => user.email === email);
+    try {
+        const database = readDatabase();
+        const user = database.users.find((user) => user.email === email);
 
-    if (!user) {
-        return res.status(404).send({ error: 'User not found' });
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        const preferencesList = [
+            { id: 1, name: 'Vegetarian' },
+            { id: 2, name: 'Vegan' },
+            { id: 3, name: 'Keto' },
+            { id: 4, name: 'Gluten Free' },
+            { id: 5, name: 'Dairy Free' },
+            { id: 6, name: 'Nut Free' },
+            { id: 7, name: 'Shellfish Free' },
+            { id: 8, name: 'Egg Free' },
+            { id: 9, name: 'Soy Free' },
+        ];
+
+        const preferenceIds = user.preferences
+            .map((name) => {
+                const preference = preferencesList.find((pref) => pref.name === name);
+                return preference ? preference.id : null;
+            })
+            .filter(Boolean);
+
+        res.status(200).send({ preferences: preferenceIds });
+    } catch (error) {
+        console.error('Error fetching preferences:', error);
+        res.status(500).send({ error: 'An error occurred while fetching preferences' });
     }
-
-    res.status(200).send({ preferences: user.preferences });
 });
+
 
 app.post('/preferences', (req, res) => {
     const { email, preferences } = req.body;
