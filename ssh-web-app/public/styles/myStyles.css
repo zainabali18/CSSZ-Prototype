@@ -223,7 +223,64 @@ input[type="password"] {
 }
 
 
+/* Preferances Page */
 
+.preferences-container {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center; 
+    align-items: center; 
+    gap: 20px; 
+    margin: 20px 0; 
+}
+
+.preference-button {
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    width: 180px; 
+    height: 180px; 
+    border: 2px solid #ccc; 
+    border-radius: 10px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+    background-color: white;
+    font-size: 18px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: all 0.3s ease; 
+}
+
+.preference-button.selected {
+    border-color: #4CAF50; 
+    box-shadow: 0 6px 8px rgba(76, 175, 80, 0.2);
+    background-color: #f5fff5;
+}
+
+.preference-icon {
+    width: 130px; 
+    height: 130px; 
+    margin-bottom: 10px; 
+}
+
+.save-button {
+    margin-top: 20px;
+    padding: 15px 25px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.save-button:hover {
+    background-color: #45a049; 
+}
+  
 
 /* Footer Icons */
 

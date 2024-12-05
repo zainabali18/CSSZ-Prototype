@@ -25,16 +25,17 @@ const clerkPubKey = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState(null);
 
-  const handleLogin = () => {
+  const handleLogin = (email) => {
     setIsLoggedIn(true);
-};
+    setUserEmail(email);
+  };
 
-const handleLogout = () => {
-    console.log('Logging out...');
+  const handleLogout = () => {
     setIsLoggedIn(false);
-};
-
+    setUserEmail(null);
+  };
 
   return (
     <ClerkProvider publishableKey={clerkPubKey}>
@@ -49,19 +50,25 @@ const handleLogout = () => {
               {/* Public Routes */}
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
-              <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+              <Route
+                path="/login"
+                element={<LoginPage onLogin={(email) => handleLogin(email)} />}
+              />
               <Route path="/register" element={<RegistrationPage />} />
               <Route path="/welcome" element={<WelcomePage />} />
               <Route path="/logout" element={<LogoutPage onLogout={handleLogout} />} />
               <Route path="/faq" element={<FaqPage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
-              
+
               {/* Private Routes */}
               {isLoggedIn && (
                 <>
                   <Route path="/inventory" element={<InventoryPage />} />
                   <Route path="/recipes" element={<RecipesPage />} />
-                  <Route path="/preferences" element={<PreferencesPage />} />
+                  <Route
+                    path="/preferences"
+                    element={<PreferencesPage userEmail={userEmail} />}
+                  />
                 </>
               )}
             </Routes>
@@ -74,5 +81,6 @@ const handleLogout = () => {
     </ClerkProvider>
   );
 };
+
 
 export default App;

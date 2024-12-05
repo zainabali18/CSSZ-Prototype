@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage = ({ onLogin }) => {
-    const [loginData, setLoginData] = useState({
-        email: '',
-        password: '',
-    });
+    const [loginData, setLoginData] = useState({ email: '', password: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
@@ -33,7 +30,7 @@ const LoginPage = ({ onLogin }) => {
             })
             .then((data) => {
                 alert('Login successful!');
-                onLogin();
+                onLogin(data.user.email); // Pass the email to onLogin
                 navigate('/welcome');
             })
             .catch((error) => {
@@ -48,7 +45,7 @@ const LoginPage = ({ onLogin }) => {
     return (
         <div className="container-fluid mainContainer">
             <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
-                <h1 className="title_features" >Log In</h1>
+                <h1>Log In</h1>
                 <form onSubmit={handleSubmit}>
                     <div style={{ marginBottom: '10px' }}>
                         <label htmlFor="email">Email:</label>

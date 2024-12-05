@@ -4,7 +4,12 @@
       "id": 1733325892090,
       "username": "test1",
       "email": "test1@gmail.com",
-      "password": "password123"
+      "password": "password123",
+      "preferences": [
+        3,
+        4,
+        5
+      ]
     }
   ]
 }

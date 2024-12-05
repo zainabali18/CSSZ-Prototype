@@ -7,16 +7,13 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-// Middleware
 app.use(cors({
     origin: 'http://localhost:3000' 
 }));
 app.use(bodyParser.json());
 
-// Path to database.json
 const dbPath = path.join(__dirname, 'data', 'database.json');
 
-// Helper functions to interact with database.json
 const readDatabase = () => {
     const data = fs.readFileSync(dbPath, 'utf-8');
     return JSON.parse(data);
@@ -44,7 +41,6 @@ app.get('/check-email', (req, res) => {
     res.status(200).send({ exists: false, message: 'Email is available' });
 });
 
-// Endpoint to register a new user
 app.post('/register', (req, res) => {
     const { username, email, password } = req.body;
 
@@ -61,7 +57,7 @@ app.post('/register', (req, res) => {
     }
 
     // Create a new user and add to database
-    const newUser = { id: Date.now(), username, email, password };
+    const newUser = { id: Date.now(), username, email, password, preferences: [] };
     database.users.push(newUser);
     writeDatabase(database);
 
@@ -85,8 +81,46 @@ app.post('/login', (req, res) => {
     res.status(200).send({ message: 'Login successful', user: { id: user.id, username: user.username, email: user.email } });
 });
 
+// Endpoint to get user preferences
+app.get('/preferences', (req, res) => {
+    const { email } = req.query;
 
-// Start the server
+    if (!email) {
+        return res.status(400).send({ error: 'Email is required' });
+    }
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.email === email);
+
+    if (!user) {
+        return res.status(404).send({ error: 'User not found' });
+    }
+
+    res.status(200).send({ preferences: user.preferences });
+});
+
+// Endpoint to update user preferences
+app.post('/preferences', (req, res) => {
+    const { email, preferences } = req.body;
+
+    if (!email || !preferences) {
+        return res.status(400).send({ error: 'Email and preferences are required' });
+    }
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.email === email);
+
+    if (!user) {
+        return res.status(404).send({ error: 'User not found' });
+    }
+
+    user.preferences = preferences;
+    writeDatabase(database);
+
+    res.status(200).send({ message: 'Preferences updated successfully' });
+});
+
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
