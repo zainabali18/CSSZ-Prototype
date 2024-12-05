@@ -51,8 +51,7 @@ const App = () => {
               <Route path="/" element={<HomePage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route
-                path="/login"
-                element={<LoginPage onLogin={(email) => handleLogin(email)} />}
+                path="/login" element={<LoginPage onLogin={(email) => handleLogin(email)} />}
               />
               <Route path="/register" element={<RegistrationPage />} />
               <Route path="/welcome" element={<WelcomePage />} />

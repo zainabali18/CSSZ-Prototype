@@ -99,7 +99,6 @@ app.get('/preferences', (req, res) => {
     res.status(200).send({ preferences: user.preferences });
 });
 
-// Endpoint to update user preferences
 app.post('/preferences', (req, res) => {
     const { email, preferences } = req.body;
 
@@ -108,13 +107,31 @@ app.post('/preferences', (req, res) => {
     }
 
     const database = readDatabase();
-    const user = database.users.find((user) => user.email === email);
 
-    if (!user) {
+    const userIndex = database.users.findIndex((user) => user.email === email);
+
+    if (userIndex === -1) {
         return res.status(404).send({ error: 'User not found' });
     }
 
-    user.preferences = preferences;
+    const preferencesList = [
+        { id: 1, name: 'Vegetarian' },
+        { id: 2, name: 'Vegan' },
+        { id: 3, name: 'Keto' },
+        { id: 4, name: 'Gluten Free' },
+        { id: 5, name: 'Dairy Free' },
+        { id: 6, name: 'Nut Free' },
+        { id: 7, name: 'Shellfish Free' },
+        { id: 8, name: 'Egg Free' },
+        { id: 9, name: 'Soy Free' },
+    ];
+
+    const selectedPreferenceNames = preferences.map((id) => {
+        const preference = preferencesList.find((pref) => pref.id === id);
+        return preference ? preference.name : null;
+    }).filter(Boolean);
+
+    database.users[userIndex].preferences = selectedPreferenceNames;
     writeDatabase(database);
 
     res.status(200).send({ message: 'Preferences updated successfully' });

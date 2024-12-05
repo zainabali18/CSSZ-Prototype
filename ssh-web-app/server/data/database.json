@@ -6,9 +6,21 @@
       "email": "test1@gmail.com",
       "password": "password123",
       "preferences": [
-        3,
-        4,
-        5
+        "Gluten Free",
+        "Dairy Free",
+        "Vegan",
+        "Egg Free"
+      ]
+    },
+    {
+      "id": 1733408469238,
+      "username": "test2",
+      "email": "test2@gmail.com",
+      "password": "test2",
+      "preferences": [
+        "Nut Free",
+        "Shellfish Free",
+        "Egg Free"
       ]
     }
   ]
