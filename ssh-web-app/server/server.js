@@ -158,6 +158,72 @@ app.post('/preferences', (req, res) => {
     res.status(200).send({ message: 'Preferences updated successfully' });
 });
 
+let ingredients = [];
+
+app.post('/api/ingredients', (req, res) => {
+    const { name, expiryDate } = req.body;
+
+    if (!name || !expiryDate) {
+        return res.status(400).send({ error: 'Name and ingredient are required' });
+    }
+
+    const newIngredient = {
+        id: Date.now(),
+        name,
+        expiryDate,
+        dateAddd: new Date()
+    };
+
+    ingredients.push(newIngredient);
+    res.status(201).send({ message: 'Ingredient added successfully', ingredient: newIngredient });
+});
+
+app.get('/api/ingredients', (req, res) => {
+    res.status(200).send({ ingredients });
+});
+
+app.delete('/api/ingredients/:id', (req, res) => {
+    const { id } = req.params;
+    const initialLength = ingredients.length;
+    ingredients = ingredients.filter((ingredient) => ingredient.id !== parseInt(id));
+
+    if (ingredients.length == initialLength) {
+        return res.status(404).send({ error: 'Ingredient not found' });
+    }
+
+    res.status(200).send({ message: 'Ingredient deleted successfully' });
+});
+
+app.get('/api/recipes', async (req, res) => {
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).send({ error: 'Email is required' });
+    }
+
+    try {
+        const database = readDatabase();
+        const user = database.users.find((user) => user.email === email);
+
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+
+        const ingredientList = ingredients.map(i => i.name).join(',');
+
+        // TODO: Implement recipe search logic using Spoonacular API
+        // For now, we'll just return a sample recipe
+
+        res.status(200).send({
+            message: 'Recipes fetched successfully',
+            ingredients: ingredientList,
+            userPreferences: user.preferences
+        });
+    } catch (error) {
+        console.error('Error fetching recipes:', error);
+        res.status(500).send({ error: 'An error occurred while fetching recipes' });
+    }
+});
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
