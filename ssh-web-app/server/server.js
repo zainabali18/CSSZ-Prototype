@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const { spoonacularApi } = require('../src/api/spoonacular');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -158,72 +159,154 @@ app.post('/preferences', (req, res) => {
     res.status(200).send({ message: 'Preferences updated successfully' });
 });
 
-let ingredients = [];
+let inventory = [];
 
-app.post('/api/ingredients', (req, res) => {
-    const { name, expiryDate } = req.body;
-
-    if (!name || !expiryDate) {
-        return res.status(400).send({ error: 'Name and ingredient are required' });
-    }
-
-    const newIngredient = {
-        id: Date.now(),
-        name,
-        expiryDate,
-        dateAddd: new Date()
-    };
-
-    ingredients.push(newIngredient);
-    res.status(201).send({ message: 'Ingredient added successfully', ingredient: newIngredient });
-});
-
-app.get('/api/ingredients', (req, res) => {
-    res.status(200).send({ ingredients });
-});
-
-app.delete('/api/ingredients/:id', (req, res) => {
-    const { id } = req.params;
-    const initialLength = ingredients.length;
-    ingredients = ingredients.filter((ingredient) => ingredient.id !== parseInt(id));
-
-    if (ingredients.length == initialLength) {
-        return res.status(404).send({ error: 'Ingredient not found' });
-    }
-
-    res.status(200).send({ message: 'Ingredient deleted successfully' });
-});
-
-app.get('/api/recipes', async (req, res) => {
-    const { email } = req.query;
-
-    if (!email) {
-        return res.status(400).send({ error: 'Email is required' });
-    }
-
+// Add item to inventory with user association
+app.post('/api/inventory', async (req, res) => {
+    const { name, quantity, expiryDate, userId } = req.body;
+    
     try {
-        const database = readDatabase();
-        const user = database.users.find((user) => user.email === email);
-
-        if (!user) {
-            return res.status(404).send({ error: 'User not found' });
+        // First search Spoonacular for the ingredient
+        const searchResult = await spoonacularApi.searchRecipes(name);
+        
+        if (!searchResult.results || searchResult.results.length === 0) {
+            return res.status(400).json({ error: 'Invalid ingredient name' });
         }
 
-        const ingredientList = ingredients.map(i => i.name).join(',');
-
-        // TODO: Implement recipe search logic using Spoonacular API
-        // For now, we'll just return a sample recipe
-
-        res.status(200).send({
-            message: 'Recipes fetched successfully',
-            ingredients: ingredientList,
-            userPreferences: user.preferences
-        });
+        const ingredient = searchResult.results[0];
+        
+        const newItem = {
+            id: Date.now(),
+            userId,
+            name: ingredient.title,
+            spoonacularId: ingredient.id,
+            quantity: quantity || 1,
+            expiryDate,
+            dateAdded: new Date(),
+            category: 'uncategorized'
+        };
+        
+        inventory.push(newItem);
+        res.status(201).json(newItem);
     } catch (error) {
-        console.error('Error fetching recipes:', error);
-        res.status(500).send({ error: 'An error occurred while fetching recipes' });
+        console.error('Error adding inventory item:', error);
+        res.status(500).json({ error: 'Failed to add inventory item' });
     }
 });
+
+// Get user's inventory
+app.get('/api/ingredients/search', async (req, res) => {
+    const { query } = req.query;
+    try {
+        const results = await spoonacularApi.searchRecipes(query);
+        res.json(results);
+    } catch (error) {
+        console.error('Error searching ingredients:', error);
+        res.status(500).json({ error: 'Failed to search ingredients' });
+    }
+});
+
+// Update inventory item
+app.put('/api/inventory/:id', async (req, res) => {
+    const { id } = req.params;
+    const { name, quantity, expiryDate, category } = req.body;
+    
+    try {
+        const itemIndex = inventory.findIndex(item => item.id === parseInt(id));
+        if (itemIndex === -1) {
+            return res.status(404).json({ error: 'Item not found' });
+        }
+
+        // If name is being updated, get new Spoonacular info
+        let spoonacularInfo = {};
+        if (name && name !== inventory[itemIndex].name) {
+            const searchResult = await spoonacularApi.searchRecipes(name);
+            if (searchResult.results && searchResult.results.length > 0) {
+                spoonacularInfo = await spoonacularApi.getRecipeById(searchResult.results[0].id);
+            }
+        }
+
+        inventory[itemIndex] = {
+            ...inventory[itemIndex],
+            name: spoonacularInfo.title || inventory[itemIndex].name,
+            spoonacularId: spoonacularInfo.id || inventory[itemIndex].spoonacularId,
+            quantity: quantity || inventory[itemIndex].quantity,
+            expiryDate: expiryDate || inventory[itemIndex].expiryDate,
+            category: category || spoonacularInfo.aisle || inventory[itemIndex].category,
+            nutritionInfo: spoonacularInfo.nutrition || inventory[itemIndex].nutritionInfo
+        };
+
+        res.json(inventory[itemIndex]);
+    } catch (error) {
+        console.error('Error updating inventory item:', error);
+        res.status(500).json({ error: 'Failed to update item' });
+    }
+});
+
+// Delete inventory item
+app.delete('/api/inventory/:id', (req, res) => {
+    const { id } = req.params;
+    const initialLength = inventory.length;
+    inventory = inventory.filter(item => item.id !== parseInt(id));
+
+    if (inventory.length === initialLength) {
+        return res.status(404).json({ error: 'Item not found' });
+    }
+
+    res.status(200).json({ message: 'Item deleted successfully' });
+});
+
+// Add this endpoint for updating quantity
+app.patch('/api/inventory/:id/quantity', (req, res) => {
+    const { id } = req.params;
+    const { quantity } = req.body;
+    
+    const item = inventory.find(item => item.id === parseInt(id));
+    if (!item) {
+        return res.status(404).json({ error: 'Item not found' });
+    }
+    
+    item.quantity = quantity;
+    res.json(item);
+});
+
+// Predefined categories
+const CATEGORIES = ['Fruits', 'Vegetables', 'Dairy', 'Meat', 'Pantry', 'Other'];
+
+// Add category to item
+app.patch('/api/inventory/:id/category', (req, res) => {
+    const { id } = req.params;
+    const { category } = req.body;
+    
+    if (!CATEGORIES.includes(category)) {
+        return res.status(400).json({ error: 'Invalid category' });
+    }
+    
+    const item = inventory.find(item => item.id === parseInt(id));
+    if (!item) {
+        return res.status(404).json({ error: 'Item not found' });
+    }
+    
+    item.category = category;
+    res.json(item);
+});
+
+// Get soon-to-expire items (within 7 days)
+app.get('/api/inventory/:userId/expiring', (req, res) => {
+    const { userId } = req.params;
+    const sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+    
+    const expiringItems = inventory.filter(item => {
+        const expiryDate = new Date(item.expiryDate);
+        return item.userId === userId && 
+               expiryDate <= sevenDaysFromNow && 
+               expiryDate >= new Date();
+    });
+    
+    res.json(expiringItems);
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
