@@ -27,6 +27,13 @@ const InventoryPage = ({ userEmail }) => {
       return;
     }
 
+    // Validate the expiration date format (dd/mm/yyyy)
+    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    if (!dateRegex.test(expirationDate)) {
+      alert("Invalid date format. Please use dd/mm/yyyy.");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -150,7 +157,8 @@ const InventoryPage = ({ userEmail }) => {
           ))}
         </select>
         <input
-          type="date"
+          type="text"
+          placeholder="dd/mm/yyyy"
           value={expirationDate}
           onChange={(e) => setExpirationDate(e.target.value)}
           style={{ padding: "8px", marginRight: "10px" }}

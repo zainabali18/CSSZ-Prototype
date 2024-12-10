@@ -213,6 +213,12 @@ app.post('/api/inventory', async (req, res) => {
         return res.status(400).json({ error: 'Email, name, and expiry date are required' });
     }
 
+    // Editing date formatting
+    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    if (!dateRegex.test(expiryDate)) {
+        return res.status(400).json({ error: 'Invalid expiry date format. Use dd/mm/yyyy.' });
+    }
+
     const database = readDatabase();
     const user = database.users.find((user) => user.email === email);
 
@@ -304,7 +310,8 @@ app.get('/api/inventory/expiring', (req, res) => {
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
     const expiringItems = (user.inventory || []).filter(item => {
-        const expiryDate = new Date(item.expiryDate);
+        const [day, month, year] = item.expiryDate.split('/');
+        const expiryDate = new Date(`${year}-${month}-${day}`);
         return expiryDate >= today && expiryDate <= sevenDaysFromNow;
     });
 
@@ -418,7 +425,8 @@ app.get('/api/recipes/expiring', async (req, res) => {
 
     const expiringIngredients = (user.inventory || [])
         .filter((item) => {
-            const expiryDate = new Date(item.expiryDate);
+            const [day, month, year] = item.expiryDate.split('/');
+            const expiryDate = new Date(`${year}-${month}-${day}`);
             return expiryDate >= today && expiryDate <= sevenDaysFromNow;
         })
         .map((item) => item.name)
