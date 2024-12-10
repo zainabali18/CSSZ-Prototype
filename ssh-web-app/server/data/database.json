@@ -11,7 +11,8 @@
         "Shellfish Free",
         "Egg Free",
         "Dairy Free"
-      ]
+      ],
+      "inventory": []
     },
     {
       "id": 1733408469238,
@@ -22,7 +23,8 @@
         "Nut Free",
         "Shellfish Free",
         "Egg Free"
-      ]
+      ],
+      "inventory": []
     },
     {
       "id": 1733409306226,
@@ -35,7 +37,8 @@
         "Shellfish Free",
         "Egg Free",
         "Dairy Free"
-      ]
+      ],
+      "inventory": []
     }
   ]
 }

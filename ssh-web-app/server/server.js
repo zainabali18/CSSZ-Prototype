@@ -202,154 +202,128 @@ app.post('/preferences/delete', (req, res) => {
     res.status(200).send({ message: 'Preference deleted successfully', preferences: user.preferences });
 });
 
-let inventory = [];
-
-// Add item to inventory with user association
-app.post('/api/inventory', async (req, res) => {
-    const { name, quantity, expiryDate, userId } = req.body;
-    
-    try {
-        // First search Spoonacular for the ingredient
-        const searchResult = await spoonacularApi.searchRecipes(name);
-        
-        if (!searchResult.results || searchResult.results.length === 0) {
-            return res.status(400).json({ error: 'Invalid ingredient name' });
-        }
-
-        const ingredient = searchResult.results[0];
-        
-        const newItem = {
-            id: Date.now(),
-            userId,
-            name: ingredient.title,
-            spoonacularId: ingredient.id,
-            quantity: quantity || 1,
-            expiryDate,
-            dateAdded: new Date(),
-            category: 'uncategorized'
-        };
-        
-        inventory.push(newItem);
-        res.status(201).json(newItem);
-    } catch (error) {
-        console.error('Error adding inventory item:', error);
-        res.status(500).json({ error: 'Failed to add inventory item' });
-    }
-});
-
-// Get user's inventory
-app.get('/api/ingredients/search', async (req, res) => {
-    const { query } = req.query;
-    try {
-        const results = await spoonacularApi.searchRecipes(query);
-        res.json(results);
-    } catch (error) {
-        console.error('Error searching ingredients:', error);
-        res.status(500).json({ error: 'Failed to search ingredients' });
-    }
-});
-
-// Update inventory item
-app.put('/api/inventory/:id', async (req, res) => {
-    const { id } = req.params;
-    const { name, quantity, expiryDate, category } = req.body;
-    
-    try {
-        const itemIndex = inventory.findIndex(item => item.id === parseInt(id));
-        if (itemIndex === -1) {
-            return res.status(404).json({ error: 'Item not found' });
-        }
-
-        // If name is being updated, get new Spoonacular info
-        let spoonacularInfo = {};
-        if (name && name !== inventory[itemIndex].name) {
-            const searchResult = await spoonacularApi.searchRecipes(name);
-            if (searchResult.results && searchResult.results.length > 0) {
-                spoonacularInfo = await spoonacularApi.getRecipeById(searchResult.results[0].id);
-            }
-        }
-
-        inventory[itemIndex] = {
-            ...inventory[itemIndex],
-            name: spoonacularInfo.title || inventory[itemIndex].name,
-            spoonacularId: spoonacularInfo.id || inventory[itemIndex].spoonacularId,
-            quantity: quantity || inventory[itemIndex].quantity,
-            expiryDate: expiryDate || inventory[itemIndex].expiryDate,
-            category: category || spoonacularInfo.aisle || inventory[itemIndex].category,
-            nutritionInfo: spoonacularInfo.nutrition || inventory[itemIndex].nutritionInfo
-        };
-
-        res.json(inventory[itemIndex]);
-    } catch (error) {
-        console.error('Error updating inventory item:', error);
-        res.status(500).json({ error: 'Failed to update item' });
-    }
-});
-
-// Delete inventory item
-app.delete('/api/inventory/:id', (req, res) => {
-    const { id } = req.params;
-    const initialLength = inventory.length;
-    inventory = inventory.filter(item => item.id !== parseInt(id));
-
-    if (inventory.length === initialLength) {
-        return res.status(404).json({ error: 'Item not found' });
-    }
-
-    res.status(200).json({ message: 'Item deleted successfully' });
-});
-
-// Add this endpoint for updating quantity
-app.patch('/api/inventory/:id/quantity', (req, res) => {
-    const { id } = req.params;
-    const { quantity } = req.body;
-    
-    const item = inventory.find(item => item.id === parseInt(id));
-    if (!item) {
-        return res.status(404).json({ error: 'Item not found' });
-    }
-    
-    item.quantity = quantity;
-    res.json(item);
-});
-
 // Predefined categories
 const CATEGORIES = ['Fruits', 'Vegetables', 'Dairy', 'Meat', 'Pantry', 'Other'];
 
+// Add item to inventory with user association
+app.post('/api/inventory', async (req, res) => {
+    const { userId, name, quantity, expiryDate, category } = req.body;
+
+    if (!userId || !name || !expiryDate) {
+        return res.status(400).json({ error: 'User ID and name are required' });
+    }
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.id === userId);
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const newItem = {
+        id: Date.now(),
+        name,
+        quantity: quantity || 1,
+        expiryDate,
+        category: category || 'Other',
+    };
+
+    user.inventory = user.inventory || [];
+    user.inventory.push(newItem);
+    writeDatabase(database);
+
+    res.status(201).json({ message: 'Item added to inventory', item: newItem });
+
+});
+
+// Get all inventory items for a user
+app.get('/api/inventory/:userId', async (req, res) => {
+    const { userId } = req.params;
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.id === parseInt(userId));
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ inventory: user.inventory || [] });
+});
+
+// Delete inventory item
+app.delete('/api/inventory/:userId/:itemId', (req, res) => {
+    const { userId, itemId } = req.params;
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.id === parseInt(userId));
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (!user.inventory) {
+        return res.status(404).json({ error: 'No inventory items found' });
+    }
+
+    const initialLength = user.inventory.length;
+    user.inventory = user.inventory.filter(item => item.id !== parseInt(itemId));
+
+    if (user.inventory.length === initialLength) {
+        return res.status(404).json({ error: 'Item not found' });
+    }
+
+    writeDatabase(database);
+    res.status(200).json({ message: 'Item deleted successfully' });
+});
+
+// Get expiring items for a user
+app.get('/api/inventory/:userId/expiring', (req, res) => {
+    const { userId } = req.params;
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.id === parseInt(userId));
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const today = new Date();
+    const sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+
+    const expiringItems = (user.inventory  || []).filter(item => {
+        const expiryDate = new Date(item.expiryDate);
+        return expiryDate >= today && expiryDate <= sevenDaysFromNow;
+    });
+
+    res.status(200).json({ expiringItems });
+});
+
 // Add category to item
-app.patch('/api/inventory/:id/category', (req, res) => {
-    const { id } = req.params;
+app.patch('/api/inventory/:userId/:itemId/category', (req, res) => {
+    const { userId, itemId } = req.params;
     const { category } = req.body;
-    
+
     if (!CATEGORIES.includes(category)) {
         return res.status(400).json({ error: 'Invalid category' });
     }
     
-    const item = inventory.find(item => item.id === parseInt(id));
+    const database = readDatabase();
+    const user = database.users.find((user) => user.id === parseInt(userId));
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const item = (user.inventory || []).find(item => item.id === parseInt(itemId));
     if (!item) {
         return res.status(404).json({ error: 'Item not found' });
     }
-    
+
     item.category = category;
-    res.json(item);
+    writeDatabase(database);
+    res.status(200).json({ message: 'Category updated successfully', item });
 });
-
-// Get soon-to-expire items (within 7 days)
-app.get('/api/inventory/:userId/expiring', (req, res) => {
-    const { userId } = req.params;
-    const sevenDaysFromNow = new Date();
-    sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
-    
-    const expiringItems = inventory.filter(item => {
-        const expiryDate = new Date(item.expiryDate);
-        return item.userId === userId && 
-               expiryDate <= sevenDaysFromNow && 
-               expiryDate >= new Date();
-    });
-    
-    res.json(expiringItems);
-});
-
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
