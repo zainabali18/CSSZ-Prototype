@@ -12,7 +12,22 @@
         "Egg Free",
         "Dairy Free"
       ],
-      "inventory": []
+      "inventory": [
+        {
+          "id": 1733827822895,
+          "name": "apple",
+          "quantity": 2,
+          "expiryDate": "2024-12-10",
+          "category": "Fruits"
+        },
+        {
+          "id": 1733827834761,
+          "name": "apple",
+          "quantity": 5,
+          "expiryDate": "2024-12-10",
+          "category": "Fruits"
+        }
+      ]
     },
     {
       "id": 1733408469238,

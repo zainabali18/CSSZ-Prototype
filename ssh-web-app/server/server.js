@@ -207,14 +207,14 @@ const CATEGORIES = ['Fruits', 'Vegetables', 'Dairy', 'Meat', 'Pantry', 'Other'];
 
 // Add item to inventory with user association
 app.post('/api/inventory', async (req, res) => {
-    const { userId, name, quantity, expiryDate, category } = req.body;
+    const { email, name, quantity, expiryDate, category } = req.body;
 
-    if (!userId || !name || !expiryDate) {
-        return res.status(400).json({ error: 'User ID and name are required' });
+    if (!email || !name || !expiryDate) {
+        return res.status(400).json({ error: 'Email, name, and expiry date are required' });
     }
 
     const database = readDatabase();
-    const user = database.users.find((user) => user.id === userId);
+    const user = database.users.find((user) => user.email === email);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -233,15 +233,18 @@ app.post('/api/inventory', async (req, res) => {
     writeDatabase(database);
 
     res.status(201).json({ message: 'Item added to inventory', item: newItem });
-
 });
 
 // Get all inventory items for a user
-app.get('/api/inventory/:userId', async (req, res) => {
-    const { userId } = req.params;
+app.get('/api/inventory', async (req, res) => {
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
 
     const database = readDatabase();
-    const user = database.users.find((user) => user.id === parseInt(userId));
+    const user = database.users.find((user) => user.email === email);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -251,11 +254,16 @@ app.get('/api/inventory/:userId', async (req, res) => {
 });
 
 // Delete inventory item
-app.delete('/api/inventory/:userId/:itemId', (req, res) => {
-    const { userId, itemId } = req.params;
+app.delete('/api/inventory/:itemId', (req, res) => {
+    const { email } = req.body;
+    const { itemId } = req.params;
+
+    if (!email || !itemId) {
+        return res.status(400).json({ error: 'Email and item ID are required' });
+    }
 
     const database = readDatabase();
-    const user = database.users.find((user) => user.id === parseInt(userId));
+    const user = database.users.find((user) => user.email === email);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -277,11 +285,15 @@ app.delete('/api/inventory/:userId/:itemId', (req, res) => {
 });
 
 // Get expiring items for a user
-app.get('/api/inventory/:userId/expiring', (req, res) => {
-    const { userId } = req.params;
+app.get('/api/inventory/expiring', (req, res) => {
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
 
     const database = readDatabase();
-    const user = database.users.find((user) => user.id === parseInt(userId));
+    const user = database.users.find((user) => user.email === email);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -291,7 +303,7 @@ app.get('/api/inventory/:userId/expiring', (req, res) => {
     const sevenDaysFromNow = new Date();
     sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
 
-    const expiringItems = (user.inventory  || []).filter(item => {
+    const expiringItems = (user.inventory || []).filter(item => {
         const expiryDate = new Date(item.expiryDate);
         return expiryDate >= today && expiryDate <= sevenDaysFromNow;
     });
@@ -300,16 +312,17 @@ app.get('/api/inventory/:userId/expiring', (req, res) => {
 });
 
 // Add category to item
-app.patch('/api/inventory/:userId/:itemId/category', (req, res) => {
-    const { userId, itemId } = req.params;
+app.patch('/api/inventory/:itemId/category', (req, res) => {
+    const { email } = req.body;
+    const { itemId } = req.params;
     const { category } = req.body;
 
-    if (!CATEGORIES.includes(category)) {
-        return res.status(400).json({ error: 'Invalid category' });
+    if (!email || !CATEGORIES.includes(category)) {
+        return res.status(400).json({ error: 'Email and valid category are required' });
     }
-    
+
     const database = readDatabase();
-    const user = database.users.find((user) => user.id === parseInt(userId));
+    const user = database.users.find((user) => user.email === email);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -327,14 +340,14 @@ app.patch('/api/inventory/:userId/:itemId/category', (req, res) => {
 
 // Get recipes based on user inventory
 app.get('/api/recipes/suggest', async (req, res) => {
-    const { userId } = req.query;
+    const { email } = req.query;
 
-    if (!userId) {
-        return res.status(400).json({ error: 'User ID is required' });
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
     }
 
     const database = readDatabase();
-    const user = database.users.find((user) => user.id === parseInt(userId));
+    const user = database.users.find((user) => user.email === email);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -358,7 +371,7 @@ app.get('/api/recipes/suggest', async (req, res) => {
                 intolerances: intolerances.join(','),
             }
         });
-        res.json(response);
+        res.json(response.data);
     }
     catch (error) {
         console.error('Error fetching recipes:', error);
@@ -386,14 +399,14 @@ app.get('/api/recipes/:id', async (req, res) => {
 
 // Get recipes based on ingredients nearing expiry
 app.get('/api/recipes/expiring', async (req, res) => {
-    const { userId } = req.query;
+    const { email } = req.query;
 
-    if (!userId) {
-        return res.status(400).json({ error: 'User ID is required' });
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
     }
 
     const database = readDatabase();
-    const user = database.users.find((user) => user.id === parseInt(userId));
+    const user = database.users.find((user) => user.email === email);
 
     if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -412,7 +425,7 @@ app.get('/api/recipes/expiring', async (req, res) => {
         .join(',');
 
     if (!expiringIngredients) {
-        return res.status(200).json({ message: 'No items nearing expiry', recipies: [] });
+        return res.status(200).json({ message: 'No items nearing expiry', recipes: [] });
     }
 
     try {
@@ -430,6 +443,7 @@ app.get('/api/recipes/expiring', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch recipes' });
     }
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

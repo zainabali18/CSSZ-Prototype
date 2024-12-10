@@ -61,11 +61,10 @@ const App = () => {
               {/* Private Routes */}
               {isLoggedIn && (
                 <>
-                  <Route path="/inventory" element={<InventoryPage />} />
+                  <Route path="/inventory" element={<InventoryPage userEmail={userEmail}/>} />
                   <Route path="/recipes" element={<RecipesPage />} />
                   <Route
-                    path="/preferences"
-                    element={<PreferencesPage userEmail={userEmail} />}
+                    path="/preferences" element={<PreferencesPage userEmail={userEmail} />}
                   />
                 </>
               )}
