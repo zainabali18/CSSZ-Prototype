@@ -226,6 +226,10 @@ app.post('/api/inventory', async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
     }
 
+    // Parse expiryDate 
+    const [day, month, year] = expiryDate.split('/');
+    const expiryDateObject = new Date(`${year}-${month}-${day}`);
+
     const newItem = {
         id: Date.now(),
         name,
@@ -345,6 +349,35 @@ app.patch('/api/inventory/:itemId/category', (req, res) => {
     res.status(200).json({ message: 'Category updated successfully', item });
 });
 
+// Update quantity of item in inventory 
+app.patch('/api/inventory/:itemId/quantity', (req, res) => {
+    const { email, quantity } = req.body; 
+    const { itemId } = req.params; 
+
+    if (!email || quantity === undefined || quantity < 0) {
+        return res.status(400).json({ error: 'Email and valid quantity are required. Quantity must be a non-negative number.' });
+    }
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.email === email);
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const item = (user.inventory || []).find((item) => item.id === parseInt(itemId));
+    if (!item) {
+        return res.status(404).json({ error: 'Item not found' });
+    }
+
+    // Update the item's quantity
+    item.quantity = quantity;
+    writeDatabase(database);
+
+    res.status(200).json({ message: 'Quantity updated successfully', item });
+});
+
+
 // Get recipes based on user inventory
 app.get('/api/recipes/suggest', async (req, res) => {
     const { email } = req.query;
@@ -423,10 +456,18 @@ app.get('/api/recipes/expiring', async (req, res) => {
     const sevenDaysFromNow = new Date();
     sevenDaysFromNow.setDate(today.getDate() + 7);
 
+    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/; // Validation regex for dd/mm/yyyy
+
     const expiringIngredients = (user.inventory || [])
         .filter((item) => {
+            if (!dateRegex.test(item.expiryDate)) {
+                console.warn(`Invalid expiry date format for item "${item.name}": ${item.expiryDate}`);
+                return false; 
+            }
+
             const [day, month, year] = item.expiryDate.split('/');
             const expiryDate = new Date(`${year}-${month}-${day}`);
+
             return expiryDate >= today && expiryDate <= sevenDaysFromNow;
         })
         .map((item) => item.name)

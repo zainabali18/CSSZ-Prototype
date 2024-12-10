@@ -95,27 +95,27 @@ const InventoryPage = ({ userEmail }) => {
 
   // Save edited item
   const saveEdit = async () => {
-    if (!editingItem || editingItem.quantity <= 0) {
+    if (!editingItem || editingItem.quantity < 0) {
       alert("Quantity must be greater than zero.");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:5001/api/inventory", {
-        method: "PUT",
+      const response = await fetch('http://localhost:5001/api/inventory/${editingItem.id}/quantity', {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: userEmail,
-          itemId: editingItem.id,
-          updatedFields: { quantity: editingItem.quantity },
+          quantity: editingItem.quantity,
         }),
       });
 
       if (!response.ok) throw new Error("Error updating item");
 
+      const updatedItem = await response.json();
       setInventory((prev) =>
         prev.map((item) =>
-          item.id === editingItem.id ? { ...item, ...editingItem } : item
+          item.id === updatedItem.id ? updatedItem.item : item
         )
       );
       setEditingItem(null);
@@ -189,6 +189,7 @@ const InventoryPage = ({ userEmail }) => {
                   <input
                     type="number"
                     value={editingItem.quantity}
+                    min="0"
                     onChange={(e) =>
                       setEditingItem({
                         ...editingItem,
