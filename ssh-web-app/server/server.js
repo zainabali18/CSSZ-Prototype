@@ -325,6 +325,112 @@ app.patch('/api/inventory/:userId/:itemId/category', (req, res) => {
     res.status(200).json({ message: 'Category updated successfully', item });
 });
 
+// Get recipes based on user inventory
+app.get('/api/recipes/suggest', async (req, res) => {
+    const { userId } = req.query;
+
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.id === parseInt(userId));
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const ingredientNames = (user.inventory || []).map(item => item.name).join(',');
+    const dietPreferences = user.preferences.filter((pref) =>
+        ['Vegetarian', 'Vegan', 'Keto', 'Gluten Free'].includes(pref)
+    );
+    const intolerances = user.preferences.filter((pref) =>
+        ['Dairy Free', 'Nut Free', 'Shellfish Free', 'Egg Free', 'Soy Free', 'Sesame'].includes(pref)
+    );
+
+    try {
+        const response = await axios.get(`${BASE_URL}/recipes/findByIngredients`, {
+            params: {
+                apiKey: API_KEY,
+                ingredients: ingredientNames,
+                number: 10,
+                diet: dietPreferences.join(','),
+                intolerances: intolerances.join(','),
+            }
+        });
+        res.json(response);
+    }
+    catch (error) {
+        console.error('Error fetching recipes:', error);
+        res.status(500).json({ error: 'Failed to fetch recipes' });
+    }
+});
+
+// Get recipe details
+app.get('/api/recipes/:id', async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({ error: 'Recipe ID is required' });
+    }
+
+    try {
+        const recipeDetails = await spoonacularApi.getRecipeById(id);
+        res.json(recipeDetails);
+    }
+    catch (error) {
+        console.error('Error fetching recipe details:', error);
+        res.status(500).json({ error: 'Failed to fetch recipe details' });
+    }
+});
+
+// Get recipes based on ingredients nearing expiry
+app.get('/api/recipes/expiring', async (req, res) => {
+    const { userId } = req.query;
+
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.id === parseInt(userId));
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const today = new Date();
+    const sevenDaysFromNow = new Date();
+    sevenDaysFromNow.setDate(today.getDate() + 7);
+
+    const expiringIngredients = (user.inventory || [])
+        .filter((item) => {
+            const expiryDate = new Date(item.expiryDate);
+            return expiryDate >= today && expiryDate <= sevenDaysFromNow;
+        })
+        .map((item) => item.name)
+        .join(',');
+
+    if (!expiringIngredients) {
+        return res.status(200).json({ message: 'No items nearing expiry', recipies: [] });
+    }
+
+    try {
+        const response = await axios.get(`${BASE_URL}/recipes/findByIngredients`, {
+            params: {
+                apiKey: API_KEY,
+                ingredients: expiringIngredients,
+                number: 10,
+            }
+        });
+        res.json(response.data);
+    }
+    catch (error) {
+        console.error('Error fetching recipes:', error);
+        res.status(500).json({ error: 'Failed to fetch recipes' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
