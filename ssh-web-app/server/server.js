@@ -79,6 +79,19 @@ app.post('/login', (req, res) => {
     res.status(200).send({ message: 'Login successful', user: { id: user.id, username: user.username, email: user.email } });
 });
 
+// Moved the preference-related endpoints here
+const preferencesList = [
+    { id: 1, name: 'Vegetarian' },
+    { id: 2, name: 'Vegan' },
+    { id: 3, name: 'Keto' },
+    { id: 4, name: 'Gluten Free' },
+    { id: 5, name: 'Dairy Free' },
+    { id: 6, name: 'Nut Free' },
+    { id: 7, name: 'Shellfish Free' },
+    { id: 8, name: 'Egg Free' },
+    { id: 9, name: 'Soy Free' },
+];
+
 app.get('/preferences', (req, res) => {
     const { email } = req.query;
 
@@ -94,18 +107,6 @@ app.get('/preferences', (req, res) => {
             return res.status(404).send({ error: 'User not found' });
         }
 
-        const preferencesList = [
-            { id: 1, name: 'Vegetarian' },
-            { id: 2, name: 'Vegan' },
-            { id: 3, name: 'Keto' },
-            { id: 4, name: 'Gluten Free' },
-            { id: 5, name: 'Dairy Free' },
-            { id: 6, name: 'Nut Free' },
-            { id: 7, name: 'Shellfish Free' },
-            { id: 8, name: 'Egg Free' },
-            { id: 9, name: 'Soy Free' },
-        ];
-
         const preferenceIds = user.preferences
             .map((name) => {
                 const preference = preferencesList.find((pref) => pref.name === name);
@@ -120,7 +121,6 @@ app.get('/preferences', (req, res) => {
     }
 });
 
-
 app.post('/preferences', (req, res) => {
     const { email, preferences } = req.body;
 
@@ -129,24 +129,11 @@ app.post('/preferences', (req, res) => {
     }
 
     const database = readDatabase();
-
     const userIndex = database.users.findIndex((user) => user.email === email);
 
     if (userIndex === -1) {
         return res.status(404).send({ error: 'User not found' });
     }
-
-    const preferencesList = [
-        { id: 1, name: 'Vegetarian' },
-        { id: 2, name: 'Vegan' },
-        { id: 3, name: 'Keto' },
-        { id: 4, name: 'Gluten Free' },
-        { id: 5, name: 'Dairy Free' },
-        { id: 6, name: 'Nut Free' },
-        { id: 7, name: 'Shellfish Free' },
-        { id: 8, name: 'Egg Free' },
-        { id: 9, name: 'Soy Free' },
-    ];
 
     const selectedPreferenceNames = preferences.map((id) => {
         const preference = preferencesList.find((pref) => pref.id === id);
@@ -157,6 +144,62 @@ app.post('/preferences', (req, res) => {
     writeDatabase(database);
 
     res.status(200).send({ message: 'Preferences updated successfully' });
+});
+
+// Add this endpoint for adding a single preference
+app.post('/preferences/add', (req, res) => {
+    const { email, preferenceId } = req.body;
+
+    if (!email || !preferenceId) {
+        return res.status(400).send({ error: 'Email and preference are required' });
+    }   
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.email === email);
+
+    if (!user) {
+        return res.status(404).send({ error: 'User not found' });
+    }
+
+    const preferenceToAdd = preferencesList.find(p => p.id === preferenceId);
+    if (!preferenceToAdd) {
+        return res.status(400).send({ error: 'Invalid preference ID' });
+    }
+
+    if (!user.preferences.includes(preferenceToAdd.name)) {
+        return res.status(400).send({ error: 'Preference already exists for this user' });
+    }
+
+    user.preferences.push(preferenceToAdd.name);
+    writeDatabase(database);
+
+    res.status(200).send({ message: 'Preference added successfully' });
+});
+
+// Add this endpoint for deleting a single preference
+app.post('/preferences/delete', (req, res) => {
+    const { email, preferenceId } = req.body;
+
+    if (!email || !preferenceId == undefined) {
+        return res.status(400).send({ error: 'Email and preference ID are required' });
+    }
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.email === email);
+
+    if (!user) {
+        return res.status(404).send({ error: 'User not found' });
+    }
+
+    const preferenceToDelete = preferencesList.find(p => p.id === preferenceId);
+    if (!preferenceToDelete) {
+        return res.status(400).send({ error: 'Invalid preference ID' });
+    }
+
+    user.preferences = user.preferences.filter(p => p !== preferenceToDelete.name);
+    writeDatabase(database);
+
+    res.status(200).send({ message: 'Preference deleted successfully', preferences: user.preferences });
 });
 
 let inventory = [];
