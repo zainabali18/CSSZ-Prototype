@@ -27,10 +27,10 @@ const InventoryPage = ({ userEmail }) => {
       return;
     }
 
-    // Validate the expiration date format (dd/mm/yyyy)
-    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+    // Validate the expiration date format (YYYY/MM/DD)
+    const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
     if (!dateRegex.test(expirationDate)) {
-      alert("Invalid date format. Please use dd/mm/yyyy.");
+      alert("Invalid date format. Please use the date picker.");
       return;
     }
 
@@ -101,7 +101,7 @@ const InventoryPage = ({ userEmail }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:5001/api/inventory/${editingItem.id}/quantity', {
+      const response = await fetch(`http://localhost:5001/api/inventory/${editingItem.id}/quantity`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -157,8 +157,7 @@ const InventoryPage = ({ userEmail }) => {
           ))}
         </select>
         <input
-          type="text"
-          placeholder="dd/mm/yyyy"
+          type="date" // Updated to use a date picker
           value={expirationDate}
           onChange={(e) => setExpirationDate(e.target.value)}
           style={{ padding: "8px", marginRight: "10px" }}
@@ -202,7 +201,7 @@ const InventoryPage = ({ userEmail }) => {
                 )}
               </td>
               <td>{item.category}</td>
-              <td>{item.expirationDate}</td>
+              <td>{item.expiryDate}</td>
               <td>
                 {editingItem?.id === item.id ? (
                   <button onClick={saveEdit} className="save-button">

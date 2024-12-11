@@ -5,28 +5,6 @@ html{
     width:auto;
 }
 
-/* font used */
-@font-face{font-family: 'poppins';font-style:normal;font-weight:400;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Regular.ttf')
-     format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:400;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Italic.ttf')
-        format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:250;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Thin.ttf')
-            format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:250;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-ThinItalic.ttf')
-                format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:275;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-ExtraLight.ttf')
-                    format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:275;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-ExtraLightItalic.ttf')
-                        format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:300;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Light.ttf')
-                            format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:300;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-LightItalic.ttf')
-                                format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:500;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Medium.ttf')
-                                    format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:500;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-MediumItalic.ttf')
-                                        format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:600;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-SemiBold.ttf')
-                                            format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:600;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-SemiBoldItalic.ttf')
-                                                format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:700;src:local('Poppins'), url('fonts/poppins-cdnfonts/Poppins-Bold.ttf')
-                                                    format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:700;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-BoldItalic.ttf')
-                                                        format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:800;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-ExtraBold.ttf')
-                                                            format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:800;src:local('Poppins'), url('fonts/poppins-cdnfonts/Poppins-ExtraBoldItalic.ttf')
-                                                                format('truetype')}@font-face{font-family:'poppins';font-style:normal;font-weight:900;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-Black.ttf')
-                                                                    format('truetype')}@font-face{font-family:'poppins';font-style:italic;font-weight:900;src:local('Poppins'), url('./fonts/poppins-cdnfonts/Poppins-BlackItalic.ttf')
-                                                                        format('truetype')
-}
-
 /* text styles */
 
 html, body {
@@ -35,8 +13,6 @@ html, body {
     padding: 0;
     display: flex;
     flex-direction: column; /* Allows us to position the footer at the end */
-
-    font-family: 'poppins', sans-serif;
 }
 
 .center {
@@ -47,7 +23,6 @@ html, body {
 
 .title_features{
     position:relative;
-    font-family: poppins!important;
     font-weight: 500;
     font-size: 48px;
     line-height: 53px;
@@ -59,11 +34,15 @@ html, body {
     width: auto;
     height: 55px;
     position: relative;
-    font-family: poppins!important;
     font-size: 30px!important;
     font-weight: 600!important;
     color: #121212!important;
     border: none;
+}
+
+.regular-text{
+    font-size: 16px!important;
+    color: #121212!important;
 }
 
 .title_features_position{
@@ -82,7 +61,6 @@ html, body {
 
 
 .footerTextStyle{
-    font-family: poppins!important;
     font-size: 14px;
     font-weight: 500;
     line-height: 23px;
@@ -143,11 +121,63 @@ html, body {
     color: #333;
 }
 
+/* About page */
+
+.about-page-container {
+    padding: 2rem;
+  }
+  
+  .about-header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .about-header p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .why-choose-ssh h2,
+  .join-community h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .features-grid {
+    display: flex;
+    gap: 2rem;
+  }
+  
+  .feature-card {
+    flex: 1 1 calc(33% - 2rem);
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .feature-card h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .feature-card p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .join-community p {
+    font-size: 1rem;
+    text-align: center;
+  }
+  
 
 /* Register page */
 
 .bodyForRegister {
-    font-family: 'poppins', sans-serif;
     background-color: #f0f0f0;
     display: flex;
     justify-content: center;
@@ -194,33 +224,85 @@ input[type="password"] {
     margin-top: 20px; /* More space above the sign-up message */
     font-size: 16px; /* Larger text */
 }
-
+  
+  /* Privacy Policy Content */
+  .privacy-container {
+    padding: 40px 20px;
+    margin: 0 auto;
+    margin-bottom: 5%;
+  }
+  
+  .privacy-intro {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #555;
+  }
+  
+  /* Columns Layout */
+  .privacy-columns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  .privacy-column {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+  }
+  
+  .privacy-column h2 {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .privacy-column ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .privacy-column ul li {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #555;
+  }
+  
+  .privacy-column p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
 
 /* FAQ Styles */
 
-.faq-section {
-    margin-top: 20px;
+.faq-container {
+    padding: 40px 20px;
+    margin: 0 auto;
+    text-align: left;
 }
 
 .faq-item {
-    margin-bottom: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+    margin-bottom: 30px;
 }
 
-.faq-item h2 {
+.faq-question {
+    font-size: 1.2rem;
+    font-weight: bold;
     margin-bottom: 10px;
-    font-size: 20px;
     color: #333;
 }
 
-.faq-item p {
-    margin: 0;
-    font-size: 16px;
+.faq-answer {
+    font-size: 1rem;
     color: #555;
+    margin-left: 20px; /* Indent answer for better readability */
 }
+
 
 
 /* Preferances Page */
@@ -228,6 +310,7 @@ input[type="password"] {
 .preferences-container {
     display: flex;
     flex-wrap: wrap; 
+    grid-template-columns: repeat(5, 1fr);
     justify-content: center; 
     align-items: center; 
     gap: 20px; 
@@ -264,7 +347,8 @@ input[type="password"] {
 }
 
 .save-button {
-    margin-top: 20px;
+    margin-top: 0; /* Remove top margin */
+    margin-left: auto; /* Push to the right */
     padding: 15px 25px;
     font-size: 20px;
     font-weight: bold;
@@ -275,12 +359,238 @@ input[type="password"] {
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
+    align-self: flex-end; /* Align at the bottom */
 }
 
 .save-button:hover {
     background-color: #45a049; 
 }
   
+
+/* Inventory page */
+
+.title-container {
+    margin-top: 55px;
+    background-color: #121212; /* Black background */
+    padding: 20px;
+    color: white;
+  }
+  
+  .page-title {
+    font-size: 45px;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  .color-legend {
+    display: flex;
+    justify-content: right;
+    margin-top: 10px;
+    gap: 20px;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 25px;
+  }
+  
+  .legend-circle {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  .legend-circle.red {
+    background-color: #f77b86; 
+  }
+  
+  .legend-circle.yellow {
+    background-color: #fbe6a2; 
+  }
+  
+  .legend-circle.green {
+    background-color: #d9d3d3; 
+  }
+  
+
+.inventory-button {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #000;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: white;
+  }
+  
+  .inventory-delete-button {
+    background-color: #f44336; /* Red */
+    color: white;
+  }
+
+  /* Row colors */
+  tr.expired td {
+    background-color: #f5a9b0 !important; /* Light red */
+  }
+  
+  tr.expiring-soon td {
+    background-color: #fbe6a2 !important; /* Light yellow */
+  }
+  
+  tr.new-item td {
+    background-color: #ede7e7 !important; /* Light grey */
+  }
+  
+
+  /* Styled Inputs */
+  .inventory-form input[type="text"],
+  .inventory-form input[type="number"],
+  .inventory-form select,
+  .inventory-form input[type="date"] {
+    width: auto;
+    padding: 10px;
+    margin-right: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #e5e5e5;
+    }
+
+button.inventory-save-button {
+    padding: 8px 15px;
+    margin: 5px; /* Add gap between buttons */
+    border-radius: 5px; /* Rounded corners */
+    border: none; /* Remove default border */
+    font-size: 14px;
+    background-color: #4CAF50; 
+}
+
+/* Edit and Delete Button Styles */
+button.edit-button,
+button.delete-button {
+  padding: 8px 15px;
+  margin: 5px; /* Add gap between buttons */
+  border-radius: 5px; /* Rounded corners */
+  border: none; /* Remove default border */
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease; /* Smooth hover effect */
+}
+
+/* Edit Button Styling */
+button.edit-button {
+  background-color: #4CAF50; /* Green for Edit */
+  color: white;
+}
+
+button.edit-button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+/* Delete Button Styling */
+button.delete-button {
+  background-color: #f44336; /* Red for Delete */
+  color: white;
+}
+
+button.delete-button:hover {
+  background-color: #e53935; /* Darker red on hover */
+}
+
+
+/* Recipe Page */
+  
+  .preferences {
+    font-size: 1.2rem;
+    color: #9b9797;
+    margin-top: 10px;
+  }
+  
+  .recipes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .recipe-card {
+    text-align: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; 
+    justify-content: space-between;
+    height: 100%; 
+  }
+  
+  .recipe-title {
+    font-size: 18px;
+    margin: 10px 0 0;
+  }
+
+  .view-recipe-button {
+    margin-top: auto; 
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background-color: #f37eac; 
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); 
+    transition: all 0.3s ease;
+  }
+   
+/* Recipe Details Page */
+
+.recipe-image-section {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.recipe-details-image {
+  width: 300px;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.recipe-info-section {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 10%;
+  gap: 20px;
+}
+
+.ingredients, .instructions {
+  width: 48%;
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ingredients h2, .instructions h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+.ingredients ul, .instructions ol {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: #666;
+}
+
+
+
 
 /* Footer Icons */
 

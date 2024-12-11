@@ -15,6 +15,7 @@ import LogoutPage from './pages/LogoutPage';
 
 import InventoryPage from './pages/InventoryPage';
 import RecipesPage from './pages/RecipesPage';
+import RecipeDetailsPage from "./pages/RecipeDetailsPage";
 import PreferencesPage from './pages/PreferencesPage';
 
 import WelcomePage from './pages/WelcomePage';
@@ -62,9 +63,9 @@ const App = () => {
               {isLoggedIn && (
                 <>
                   <Route path="/inventory" element={<InventoryPage userEmail={userEmail}/>} />
-                  <Route path="/recipes" element={<RecipesPage />} />
-                  <Route
-                    path="/preferences" element={<PreferencesPage userEmail={userEmail} />}
+                  <Route path="/recipes" element={<RecipesPage userEmail={userEmail}/>} />
+                  <Route path="/recipe/:id" element={<RecipeDetailsPage userEmail={userEmail}/>} />
+                  <Route path="/preferences" element={<PreferencesPage userEmail={userEmail} />}
                   />
                 </>
               )}

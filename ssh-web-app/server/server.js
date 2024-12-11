@@ -3,7 +3,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 const { spoonacularApi } = require('../src/api/spoonacular');
+
+const API_KEY = '793af53134df4c61a842a1cd001d1c23';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -83,7 +86,7 @@ app.post('/login', (req, res) => {
 const preferencesList = [
     { id: 1, name: 'Vegetarian' },
     { id: 2, name: 'Vegan' },
-    { id: 3, name: 'Keto' },
+    { id: 3, name: 'Ketogenic' },
     { id: 4, name: 'Gluten Free' },
     { id: 5, name: 'Dairy Free' },
     { id: 6, name: 'Nut Free' },
@@ -213,12 +216,6 @@ app.post('/api/inventory', async (req, res) => {
         return res.status(400).json({ error: 'Email, name, and expiry date are required' });
     }
 
-    // Editing date formatting
-    const dateRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-    if (!dateRegex.test(expiryDate)) {
-        return res.status(400).json({ error: 'Invalid expiry date format. Use dd/mm/yyyy.' });
-    }
-
     const database = readDatabase();
     const user = database.users.find((user) => user.email === email);
 
@@ -226,24 +223,45 @@ app.post('/api/inventory', async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
     }
 
-    // Parse expiryDate 
-    const [day, month, year] = expiryDate.split('/');
-    const expiryDateObject = new Date(`${year}-${month}-${day}`);
+    let expiryDateObject;
+    // Check if the format is YYYY-MM-DD or DD/MM/YYYY
+    if (expiryDate.includes('-')) {
+        // YYYY-MM-DD format
+        expiryDateObject = new Date(expiryDate);
+    } else if (expiryDate.includes('/')) {
+        // DD/MM/YYYY format
+        const [day, month, year] = expiryDate.split('/');
+        expiryDateObject = new Date(`${year}-${month}-${day}`);
+    } else {
+        return res.status(400).json({ error: 'Invalid expiry date format. Use yyyy-mm-dd or dd/mm/yyyy.' });
+    }
+
+    // Optional: Format the expiry date to DD/MM/YYYY for consistency
+    const formattedExpiryDate = expiryDateObject.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
 
     const newItem = {
         id: Date.now(),
         name,
         quantity: quantity || 1,
-        expiryDate,
+        expiryDate: formattedExpiryDate, // Save in consistent format
         category: category || 'Other',
     };
 
     user.inventory = user.inventory || [];
     user.inventory.push(newItem);
+
+    // Clear suggestedRecipes since inventory has changed
+    user.suggestedRecipes = [];
+
     writeDatabase(database);
 
     res.status(201).json({ message: 'Item added to inventory', item: newItem });
 });
+
 
 // Get all inventory items for a user
 app.get('/api/inventory', async (req, res) => {
@@ -290,7 +308,11 @@ app.delete('/api/inventory/:itemId', (req, res) => {
         return res.status(404).json({ error: 'Item not found' });
     }
 
+    // Clear suggestedRecipes since inventory has changed
+    user.suggestedRecipes = [];
+
     writeDatabase(database);
+    
     res.status(200).json({ message: 'Item deleted successfully' });
 });
 
@@ -377,8 +399,70 @@ app.patch('/api/inventory/:itemId/quantity', (req, res) => {
     res.status(200).json({ message: 'Quantity updated successfully', item });
 });
 
-
 // Get recipes based on user inventory
+const fetchAdditionalRecipes = async (existingRecipes, ingredientNames, dietPreferences, intolerances, offset = 0, batchSize = 10) => {
+    try {
+        const response = await axios.get(`https://api.spoonacular.com/recipes/findByIngredients`, {
+            params: {
+                apiKey: API_KEY,
+                ingredients: ingredientNames,
+                number: batchSize,
+                offset: offset,
+            },
+        });
+
+        const additionalRecipes = response.data || [];
+
+        // Fetch detailed recipe information for filtering
+        const detailedRecipes = await Promise.all(
+            additionalRecipes.map(async (recipe) => {
+                try {
+                    const recipeDetailsResponse = await axios.get(`https://api.spoonacular.com/recipes/${recipe.id}/information`, {
+                        params: {
+                            apiKey: API_KEY,
+                            includeNutrition: false,
+                        },
+                    });
+                    return recipeDetailsResponse.data;
+                } catch (error) {
+                    console.error(`Error fetching details for recipe ID ${recipe.id}:`, error.message);
+                    return null; // Skip this recipe if an error occurs
+                }
+            })
+        );
+
+        // Filter recipes based on diet and intolerances
+        const filteredRecipes = detailedRecipes.filter(recipe => {
+            if (!recipe) return false; // Skip if recipe details were not fetched
+
+            // Check dietary preferences
+            const isDietMatch = dietPreferences.length === 0 || dietPreferences.every(diet =>
+                recipe[diet.toLowerCase()]
+            );
+
+            // Check intolerances
+            const isIntoleranceMatch = intolerances.length === 0 || intolerances.every(intolerance =>
+                recipe[intolerance] !== false // Ensure the intolerance is respected
+            );
+
+            return isDietMatch && isIntoleranceMatch;
+        });
+
+        // Combine new filtered recipes with existing ones
+        const allRecipes = [...existingRecipes, ...filteredRecipes];
+
+        // If we still don't have 12 recipes, fetch more
+        if (allRecipes.length < 12 && additionalRecipes.length > 0) {
+            return await fetchAdditionalRecipes(allRecipes, ingredientNames, dietPreferences, intolerances, offset + batchSize, batchSize);
+        }
+
+        return allRecipes;
+    } catch (error) {
+        console.error('Error fetching additional recipes:', error.message || error);
+        return existingRecipes; // Return what we have so far if there's an error
+    }
+};
+
 app.get('/api/recipes/suggest', async (req, res) => {
     const { email } = req.query;
 
@@ -393,49 +477,151 @@ app.get('/api/recipes/suggest', async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
     }
 
+    if (user.suggestedRecipes && user.suggestedRecipes.length > 0) {
+        return res.json(user.suggestedRecipes.slice(0, 12));
+    }
+
     const ingredientNames = (user.inventory || []).map(item => item.name).join(',');
+
     const dietPreferences = user.preferences.filter((pref) =>
         ['Vegetarian', 'Vegan', 'Keto', 'Gluten Free'].includes(pref)
     );
-    const intolerances = user.preferences.filter((pref) =>
-        ['Dairy Free', 'Nut Free', 'Shellfish Free', 'Egg Free', 'Soy Free', 'Sesame'].includes(pref)
-    );
+
+    const intoleranceMapping = {
+        "Dairy Free": "dairyFree",
+        "Egg Free": "eggFree",
+        "Nut Free": "treeNutFree",
+        "Gluten Free": "glutenFree",
+        "Soy Free": "soyFree",
+        "Sesame Free": "sesameFree",
+        "Shellfish Free": "shellfishFree",
+        "Wheat Free": "wheatFree",
+    };
+
+    const intolerances = user.preferences
+        .map((pref) => intoleranceMapping[pref])
+        .filter(Boolean);
 
     try {
-        const response = await axios.get(`${BASE_URL}/recipes/findByIngredients`, {
-            params: {
-                apiKey: API_KEY,
-                ingredients: ingredientNames,
-                number: 10,
-                diet: dietPreferences.join(','),
-                intolerances: intolerances.join(','),
-            }
-        });
-        res.json(response.data);
-    }
-    catch (error) {
-        console.error('Error fetching recipes:', error);
+        // Step 1: Fetch initial recipes using findByIngredients
+        const initialRecipes = await fetchAdditionalRecipes([], ingredientNames, dietPreferences, intolerances);
+
+        // Save filtered recipes to the user's profile
+        const finalRecipes = initialRecipes.slice(0, 12); // Ensure we only return up to 12 recipes
+        user.suggestedRecipes = finalRecipes;
+
+        // Write to the database and return the recipes
+        writeDatabase(database);
+        res.json(finalRecipes);
+    } catch (error) {
+        console.error('Error fetching recipes:', error.message || error);
         res.status(500).json({ error: 'Failed to fetch recipes' });
     }
 });
 
+
+
+
 // Get recipe details
 app.get('/api/recipes/:id', async (req, res) => {
     const { id } = req.params;
+    const { email } = req.query; // Expecting the user's email as a query parameter
 
-    if (!id) {
-        return res.status(400).json({ error: 'Recipe ID is required' });
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Find the user by email
+    const database = readDatabase();
+    const user = database.users.find((user) => user.email === email);
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
     }
 
     try {
-        const recipeDetails = await spoonacularApi.getRecipeById(id);
-        res.json(recipeDetails);
-    }
-    catch (error) {
+        const response = await axios.get(`https://api.spoonacular.com/recipes/${id}/information`, {
+            params: {
+                apiKey: API_KEY,
+                includeNutrition: false // Set to true if nutritional information is needed
+            }
+        });
+
+        const recipeData = response.data;
+
+        // Extract ingredients and instructions
+        const ingredients = recipeData.extendedIngredients.map(ing => ({
+            id: ing.id,
+            name: ing.name,
+            amount: ing.measures.us.amount,
+            unit: ing.measures.us.unitShort
+        }));
+
+        const instructions = recipeData.analyzedInstructions.flatMap(instr => 
+            instr.steps.map(step => ({
+                number: step.number,
+                step: step.step
+            }))
+        );
+
+        const detailedRecipe = {
+            id: recipeData.id,
+            title: recipeData.title,
+            image: recipeData.image,
+            ingredients,
+            instructions
+        };
+
+        // Save recipe to user's suggestedRecipes if not already present
+        const isAlreadySaved = user.suggestedRecipes.some(r => r.id === recipeData.id);
+
+        if (!isAlreadySaved) {
+            user.suggestedRecipes.push(detailedRecipe);
+
+            // Update the database
+            writeDatabase(database);
+        }
+
+        res.json(detailedRecipe);
+    } catch (error) {
         console.error('Error fetching recipe details:', error);
         res.status(500).json({ error: 'Failed to fetch recipe details' });
     }
 });
+
+
+app.get('/api/recipes/:id/image', (req, res) => {
+    const { id } = req.params;
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Read database and find user
+    const database = readDatabase();
+    const user = database.users.find((user) => user.email === email);
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Find the recipe in the user's suggestedRecipes
+    const recipe = user.suggestedRecipes.find((recipe) => recipe.id === parseInt(id));
+
+    if (!recipe) {
+        return res.status(404).json({ error: 'Recipe not found' });
+    }
+
+    // Return the image URL
+    if (recipe.image) {
+        res.json({ image: recipe.image });
+    } else {
+        res.status(404).json({ error: 'Image not available for this recipe' });
+    }
+});
+
+
 
 // Get recipes based on ingredients nearing expiry
 app.get('/api/recipes/expiring', async (req, res) => {
