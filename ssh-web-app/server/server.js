@@ -6,7 +6,7 @@ const path = require('path');
 const axios = require('axios');
 const { spoonacularApi } = require('../src/api/spoonacular');
 
-const API_KEY = 'c7282bc721924b3dbcf86b8b320b1069';
+const API_KEY = 'df49e21c984f4e89a9f869dcad799782';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -82,7 +82,6 @@ app.post('/login', (req, res) => {
     res.status(200).send({ message: 'Login successful', user: { id: user.id, username: user.username, email: user.email } });
 });
 
-// Moved the preference-related endpoints here
 const preferencesList = [
     { id: 1, name: 'Vegetarian' },
     { id: 2, name: 'Vegan' },
@@ -147,62 +146,6 @@ app.post('/preferences', (req, res) => {
     writeDatabase(database);
 
     res.status(200).send({ message: 'Preferences updated successfully' });
-});
-
-// Add this endpoint for adding a single preference
-app.post('/preferences/add', (req, res) => {
-    const { email, preferenceId } = req.body;
-
-    if (!email || !preferenceId) {
-        return res.status(400).send({ error: 'Email and preference are required' });
-    }   
-
-    const database = readDatabase();
-    const user = database.users.find((user) => user.email === email);
-
-    if (!user) {
-        return res.status(404).send({ error: 'User not found' });
-    }
-
-    const preferenceToAdd = preferencesList.find(p => p.id === preferenceId);
-    if (!preferenceToAdd) {
-        return res.status(400).send({ error: 'Invalid preference ID' });
-    }
-
-    if (!user.preferences.includes(preferenceToAdd.name)) {
-        return res.status(400).send({ error: 'Preference already exists for this user' });
-    }
-
-    user.preferences.push(preferenceToAdd.name);
-    writeDatabase(database);
-
-    res.status(200).send({ message: 'Preference added successfully' });
-});
-
-// Add this endpoint for deleting a single preference
-app.post('/preferences/delete', (req, res) => {
-    const { email, preferenceId } = req.body;
-
-    if (!email || !preferenceId == undefined) {
-        return res.status(400).send({ error: 'Email and preference ID are required' });
-    }
-
-    const database = readDatabase();
-    const user = database.users.find((user) => user.email === email);
-
-    if (!user) {
-        return res.status(404).send({ error: 'User not found' });
-    }
-
-    const preferenceToDelete = preferencesList.find(p => p.id === preferenceId);
-    if (!preferenceToDelete) {
-        return res.status(400).send({ error: 'Invalid preference ID' });
-    }
-
-    user.preferences = user.preferences.filter(p => p !== preferenceToDelete.name);
-    writeDatabase(database);
-
-    res.status(200).send({ message: 'Preference deleted successfully', preferences: user.preferences });
 });
 
 // Predefined categories
@@ -515,7 +458,6 @@ app.get('/api/recipes/suggest', async (req, res) => {
     }
 });
 
-
 // Get recipe details
 app.get('/api/recipes/:id', async (req, res) => {
     const { id } = req.params;
@@ -582,7 +524,6 @@ app.get('/api/recipes/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch recipe details' });
     }
 });
-
 
 app.get('/api/recipes/:id/image', (req, res) => {
     const { id } = req.params;
@@ -711,7 +652,11 @@ app.get('/api/inventory/alerts', (req, res) => {
     res.status(200).json({ expired: expiredItems, expiring: expiringItems });
 });
 
+if (require.main === module) {
+    // Start the server only if this file is run directly
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+module.exports = app;

@@ -1,24 +1,19 @@
-# The Prototype - Groups (2024)
+# CSSZ Prototype Group - SSH Recipe Recommendation App
 
-This repository is used to manage the groups for "The Prototype" assignment. All groups are stored in the [`./config/groups.yaml` file](config/groups.yaml).
+## Available Scripts
 
-## Adding your group
+To run the web app, go to the terminal and change to the "ssh-web-app" directory 
+ `"cd ssh-web-app"`
 
-Fork this repository to your account, clone your fork locally, and edit `./config/groups.yaml` to add your group with a name and a list of members. For example, add the following to the file. When adding a new group, you do **not** need to include an `"id"` field:
+Run "npm install" to install all the dependencies for the project
+Run "brew install node@18" -- it is important for testing that Node.js is version 18 -> You can test this by running "node -v" on the terminal
 
-```yaml
-# existing groups...
+### `npm start`
 
-- name: "My really creative group name"
-  members:
-    - "2xxxxx0"
-    - "2xxxxx1"
-    - "2xxxxx2"
-    - "2xxxxx3"
-```
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-Replace `2xxxxxx` with your own student ID and those of the others in your group. Once you have finished editing the file, stage the changes, commit them, and push the changes to your clone of the repository. Then create a pull request against this repository.
 
-## Editing your group
+### `npm test`
 
-To make changes to your group, follow the same process as above, except instead of adding a new YAML object to `./config/groups.yaml`, edit the existing one. Do not edit the `"id"` field that was added automatically.
+Launches the test runner in the interactive watch mode.\
