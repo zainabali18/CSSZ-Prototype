@@ -42,10 +42,8 @@ const App = () => {
     <ClerkProvider publishableKey={clerkPubKey}>
       <Router>
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-          {/* Header */}
-          <Header isLoggedIn={isLoggedIn} onLogout={handleLogout} />
-
-          {/* Main Content */}
+          <Header isLoggedIn={isLoggedIn} userEmail={userEmail} onLogout={handleLogout} />
+          
           <div style={{ flex: '1' }}>
             <Routes>
               {/* Public Routes */}
@@ -72,7 +70,6 @@ const App = () => {
             </Routes>
           </div>
 
-          {/* Footer */}
           <Footer isLoggedIn={isLoggedIn} />
         </div>
       </Router>

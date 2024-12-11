@@ -6,7 +6,7 @@ const path = require('path');
 const axios = require('axios');
 const { spoonacularApi } = require('../src/api/spoonacular');
 
-const API_KEY = '793af53134df4c61a842a1cd001d1c23';
+const API_KEY = 'c7282bc721924b3dbcf86b8b320b1069';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -477,10 +477,6 @@ app.get('/api/recipes/suggest', async (req, res) => {
         return res.status(404).json({ error: 'User not found' });
     }
 
-    if (user.suggestedRecipes && user.suggestedRecipes.length > 0) {
-        return res.json(user.suggestedRecipes.slice(0, 12));
-    }
-
     const ingredientNames = (user.inventory || []).map(item => item.name).join(',');
 
     const dietPreferences = user.preferences.filter((pref) =>
@@ -518,8 +514,6 @@ app.get('/api/recipes/suggest', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch recipes' });
     }
 });
-
-
 
 
 // Get recipe details
@@ -621,8 +615,6 @@ app.get('/api/recipes/:id/image', (req, res) => {
     }
 });
 
-
-
 // Get recipes based on ingredients nearing expiry
 app.get('/api/recipes/expiring', async (req, res) => {
     const { email } = req.query;
@@ -677,6 +669,46 @@ app.get('/api/recipes/expiring', async (req, res) => {
         console.error('Error fetching recipes:', error);
         res.status(500).json({ error: 'Failed to fetch recipes' });
     }
+});
+
+app.get('/api/inventory/alerts', (req, res) => {
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    const database = readDatabase();
+    const user = database.users.find((user) => user.email === email);
+
+    if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+    }
+
+    const today = new Date();
+    const expiringItems = [];
+    const expiredItems = [];
+
+    // Helper function to capitalize the first letter
+    const capitalizeFirstCharacter = (str) => {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    };
+
+    (user.inventory || []).forEach(item => {
+        const [day, month, year] = item.expiryDate.split('/');
+        const expiryDate = new Date(`${year}-${month}-${day}`);
+
+        const capitalizedItemName = capitalizeFirstCharacter(item.name);
+        
+        if (expiryDate < today) {
+            expiredItems.push(` ${capitalizedItemName} has expired.`);
+        } else if (expiryDate <= new Date(today.getTime() + 2 * 24 * 60 * 60 * 1000)) {
+            expiringItems.push(` ${capitalizedItemName} is about to expire. Expiration Date: ${item.expiryDate}.`);
+        }
+    });
+
+    res.status(200).json({ expired: expiredItems, expiring: expiringItems });
 });
 
 

@@ -31,7 +31,7 @@ const LoginPage = ({ onLogin }) => {
             .then((data) => {
                 alert('Login successful!');
                 onLogin(data.user.email); // Pass the email to onLogin
-                navigate('/welcome');
+                navigate('/');
             })
             .catch((error) => {
                 console.error('Error logging in:', error);
