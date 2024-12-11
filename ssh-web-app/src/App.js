@@ -18,7 +18,6 @@ import RecipesPage from './pages/RecipesPage';
 import RecipeDetailsPage from "./pages/RecipeDetailsPage";
 import PreferencesPage from './pages/PreferencesPage';
 
-import WelcomePage from './pages/WelcomePage';
 import FaqPage from './pages/FaqPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
@@ -43,7 +42,7 @@ const App = () => {
       <Router>
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
           <Header isLoggedIn={isLoggedIn} userEmail={userEmail} onLogout={handleLogout} />
-          
+
           <div style={{ flex: '1' }}>
             <Routes>
               {/* Public Routes */}
@@ -52,7 +51,6 @@ const App = () => {
               <Route path="/login" element={<LoginPage onLogin={(email) => handleLogin(email)} />} />
               <Route path="/register" element={<RegistrationPage onLogin={(email) => handleLogin(email)} />} />
 
-              <Route path="/welcome" element={<WelcomePage />} />
               <Route path="/logout" element={<LogoutPage onLogout={handleLogout} />} />
               <Route path="/faq" element={<FaqPage />} />
               <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
