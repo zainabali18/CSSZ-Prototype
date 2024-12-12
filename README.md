@@ -15,10 +15,14 @@ You can now view ssh-web-app in the browser by heading to : `http://localhost:30
 
 Note: As long as you have Docker installed, you can run the container without installing Node.js.
 However, to run the test scripts, you need to have node@18 installed
+
 MacOS download: brew install node@18
+
 Windows download: fnm use --install-if-missing 18
 
 To verify the right Node.js version is in the environment run : `node -v` it should print `v18.20.5`
+
+(Note: make sure to run `npm install` before running the tests to download the dependencies)
 
 To run the test scripts, navigate to "ssh-web-app directory" and run `npm test`. 
 This launches the test runner in the interactive watch mode.
