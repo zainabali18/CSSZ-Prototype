@@ -115,7 +115,7 @@ describe('API Tests', () => {
             });
         });
     });
-
+    
     describe('Recipe API', () => {
         describe('GET /api/recipes/suggest', () => {
             it('should suggest recipes based on inventory and preferences', async () => {
@@ -127,7 +127,7 @@ describe('API Tests', () => {
             });
         });
     });
-    
+
     describe('Alerts API', () => {
         describe('GET /api/inventory/alerts', () => {
             it('should fetch inventory alerts', async () => {

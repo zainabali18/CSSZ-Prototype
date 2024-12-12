@@ -46,30 +46,6 @@
         }
       ],
       "suggestedRecipes": []
-    },
-    {
-      "id": 1733992140236,
-      "username": "shebli ",
-      "email": "shebli@gmail.com",
-      "password": "shebli99",
-      "preferences": []
-    },
-    {
-      "id": 1733992370529,
-      "username": "shebli9",
-      "email": "shebli9@gmail.com",
-      "password": "shebli99",
-      "preferences": [],
-      "inventory": [
-        {
-          "id": 1733992386780,
-          "name": "zainab",
-          "quantity": 1,
-          "expiryDate": "01/01/2024",
-          "category": "Other"
-        }
-      ],
-      "suggestedRecipes": []
     }
   ]
 }

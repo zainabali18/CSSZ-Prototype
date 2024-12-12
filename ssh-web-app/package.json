@@ -30,7 +30,8 @@
     "start-client": "NODE_OPTIONS='--openssl-legacy-provider' react-scripts start",
     "build": "react-scripts build",
     "test": "node --experimental-vm-modules node_modules/.bin/jest",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+     "postinstall": "node fix-node-modules.js"
   },
   "eslintConfig": {
     "extends": [
