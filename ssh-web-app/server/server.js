@@ -6,7 +6,7 @@ const path = require('path');
 const axios = require('axios');
 const { spoonacularApi } = require('../src/api/spoonacular');
 
-const API_KEY = 'df49e21c984f4e89a9f869dcad799782';
+const API_KEY = '7f405effc5c24517b6b82df163bb3b03';
 
 const app = express();
 const PORT = process.env.PORT || 5001;

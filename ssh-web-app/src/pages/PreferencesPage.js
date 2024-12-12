@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 const preferencesList = [
     { id: 1, name: 'Vegetarian', icon: '/styles/images/vegetarian.png' },
     { id: 2, name: 'Vegan', icon: '/styles/images/vegan.png' },
-    { id: 3, name: 'Keto', icon: '/styles/images/keto.png' },
+    { id: 3, name: 'Ketogenic', icon: '/styles/images/keto.png' },
     { id: 4, name: 'Gluten Free', icon: '/styles/images/gluten.png' },
     { id: 5, name: 'Dairy free', icon: '/styles/images/dairy.png' },
     { id: 6, name: 'Nut Free', icon: '/styles/images/nut.png' },
@@ -65,10 +65,12 @@ const PreferencesPage = ({ userEmail }) => {
   }
 
   return (
-    <div className="container-fluid mainContainer">
-      <h1 className="title_features">User Preferences</h1>
-      <p>Select your dietary preferences to help us recommend the best recipes for you:</p>
-
+    <div>
+      <div className="title-container">
+        <h1 className="page-title">User Preferences</h1>
+        <p>Select your dietary preferences to help us recommend the best recipes for you:</p>
+      </div>
+    <div className="container-fluid" style={{ marginBottom: "5%"}}>
       <div className="preferences-container">
         {preferencesList.map((preference) => (
           <button
@@ -92,6 +94,7 @@ const PreferencesPage = ({ userEmail }) => {
         Save Preferences
       </button>
     </div>
+  </div>
   );
 };
 

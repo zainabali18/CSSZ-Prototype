@@ -27,7 +27,7 @@ const InventoryPage = ({ userEmail }) => {
       return;
     }
 
-    // Validate the expiration date format (YYYY/MM/DD)
+    // Validate the expiration date format (YYYY-MM-DD)
     const dateRegex = /^(\d{4})-(\d{2})-(\d{2})$/;
     if (!dateRegex.test(expirationDate)) {
       alert("Invalid date format. Please use the date picker.");
@@ -99,7 +99,7 @@ const InventoryPage = ({ userEmail }) => {
       alert("Quantity must be greater than zero.");
       return;
     }
-
+  
     try {
       const response = await fetch(`http://localhost:5001/api/inventory/${editingItem.id}/quantity`, {
         method: "PATCH",
@@ -109,46 +109,69 @@ const InventoryPage = ({ userEmail }) => {
           quantity: editingItem.quantity,
         }),
       });
-
+  
       if (!response.ok) throw new Error("Error updating item");
-
-      const updatedItem = await response.json();
-      setInventory((prev) =>
-        prev.map((item) =>
-          item.id === updatedItem.id ? updatedItem.item : item
-        )
-      );
+  
+      const data = await response.json(); // Log the response for debugging
+      console.log("Server response:", data);
+  
+      // Update inventory only if the returned item matches the structure
+      if (data.item) {
+        setInventory((prev) =>
+          prev.map((item) =>
+            item.id === data.item.id ? { ...item, ...data.item } : item
+          )
+        );
+        alert("Item updated successfully!");
+      } else {
+        console.error("Invalid server response:", data);
+        alert("Error updating inventory. Please try again.");
+      }
+  
       setEditingItem(null);
-      alert("Item updated successfully!");
     } catch (error) {
       console.error("Error saving edits:", error.message);
       alert("Error saving edits.");
     }
   };
+  
 
   return (
-    <div className="container-fluid mainContainer">
-      <h1 className="title_features">Inventory</h1>
-
-      <div style={{ marginBottom: "20px" }}>
+    <div>
+      <div className="title-container">
+        <h1 className="page-title">My Inventory</h1>
+        <div className="color-legend">
+          <div className="legend-item">
+            <span className="legend-circle red"></span> Dispose
+          </div>
+          <div className="legend-item">
+            <span className="legend-circle yellow"></span> Use Me ASAP!
+          </div>
+          <div className="legend-item">
+            <span className="legend-circle green"></span> New
+          </div>
+        </div>
+      </div>
+    <div className="container-fluid" style={{ marginBottom: "5%", paddingLeft: "50px", paddingRight: "50px" }}>
+      <div className="inventory-form"style={{ marginTop: "20px", marginBottom: "20px", gap: "10px" }}>
         <input
           type="text"
           placeholder="Enter item name..."
           value={newItem}
           onChange={(e) => setNewItem(e.target.value)}
-          style={{ padding: "8px", marginRight: "10px" }}
+          className="inventory-input"
         />
         <input
           type="number"
-          placeholder="Enter quantity"
+          placeholder="Quantity"
           value={quantity}
           onChange={(e) => setQuantity(Number(e.target.value))}
-          style={{ padding: "8px", marginRight: "10px", width: "80px" }}
+          className="inventory-input"
         />
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          style={{ padding: "8px", marginRight: "10px" }}
+          className="inventory-input"
         >
           {CATEGORIES.map((cat) => (
             <option key={cat} value={cat}>
@@ -157,10 +180,10 @@ const InventoryPage = ({ userEmail }) => {
           ))}
         </select>
         <input
-          type="date" // Updated to use a date picker
+          type="date"
           value={expirationDate}
           onChange={(e) => setExpirationDate(e.target.value)}
-          style={{ padding: "8px", marginRight: "10px" }}
+          className="inventory-input"
         />
         <button onClick={addItem} disabled={loading} className="save-button">
           {loading ? "Adding..." : "Add"}
@@ -180,53 +203,69 @@ const InventoryPage = ({ userEmail }) => {
           </tr>
         </thead>
         <tbody>
-          {inventory.map((item) => (
-            <tr key={item.id}>
-              <td>{item.name}</td>
-              <td>
-                {editingItem?.id === item.id ? (
-                  <input
-                    type="number"
-                    value={editingItem.quantity}
-                    min="0"
-                    onChange={(e) =>
-                      setEditingItem({
-                        ...editingItem,
-                        quantity: Number(e.target.value),
-                      })
-                    }
-                  />
-                ) : (
-                  item.quantity
-                )}
-              </td>
-              <td>{item.category}</td>
-              <td>{item.expiryDate}</td>
-              <td>
-                {editingItem?.id === item.id ? (
-                  <button onClick={saveEdit} className="save-button">
-                    Save
-                  </button>
-                ) : (
+          {inventory.map((item) => {
+            const today = new Date();
+            const expirationDate = new Date(item.expiryDate);
+            const daysToExpire = (expirationDate - today) / (1000 * 60 * 60 * 24);
+
+            let rowClass = "";
+            if (daysToExpire < 0) {
+              rowClass = "expired";
+            } else if (daysToExpire <= 2) {
+              rowClass = "expiring-soon";
+            } else {
+              rowClass = "new-item";
+            }
+
+            return (
+              <tr key={item.id} className={rowClass}>
+                <td>{item.name}</td>
+                <td>
+                  {editingItem?.id === item.id ? (
+                    <input
+                      type="number"
+                      value={editingItem.quantity}
+                      min="0"
+                      onChange={(e) =>
+                        setEditingItem({
+                          ...editingItem,
+                          quantity: Number(e.target.value),
+                        })
+                      }
+                    />
+                  ) : (
+                    item.quantity
+                  )}
+                </td>
+                <td>{item.category}</td>
+                <td>{item.expiryDate}</td>
+                <td>
+                  {editingItem?.id === item.id ? (
+                    <button onClick={saveEdit} className="inventory-save-button">
+                      Save
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => startEditing(item)}
+                      className="edit-button"
+                    >
+                      Edit
+                    </button>
+                  )}
                   <button
-                    onClick={() => startEditing(item)}
-                    className="edit-button"
+                    onClick={() => deleteItem(item.id)}
+                    className="delete-button"
                   >
-                    Edit
+                    Delete
                   </button>
-                )}
-                <button
-                  onClick={() => deleteItem(item.id)}
-                  className="delete-button"
-                >
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
+  </div>
   );
 };
 

@@ -15,23 +15,22 @@ const FaqPage = () => {
             answer: "Yes, SSH allows you to set up a dietary profile for personalized recipe suggestions based on your needs."
         },
         {
-            question: "How do I register for SSH?",
-            answer: "You can register by navigating to the 'Register' page and filling out the required information."
-        },
-        {
             question: "What platforms support SSH Smart Homes?",
             answer: "SSH Smart Homes is accessible via web browsers on desktops, tablets, and mobile devices."
         }
     ];
 
     return (
-        <div className="container-fluid mainContainer">
-            <h1 className="title_features">Frequently Asked Questions</h1>
-            <div className="faq-section">
+        <div>
+            <div className="title-container">
+                <h1 className="page-title">Frequently Asked Questions</h1>
+            </div>
+
+            <div className="faq-container">
                 {faqs.map((faq, index) => (
                     <div key={index} className="faq-item">
-                        <h2 className="subHeading_style">{faq.question}</h2>
-                        <p>{faq.answer}</p>
+                        <h2 className="faq-question">{faq.question}</h2>
+                        <p className="faq-answer">{faq.answer}</p>
                     </div>
                 ))}
             </div>

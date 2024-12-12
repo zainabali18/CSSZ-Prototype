@@ -28,15 +28,12 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="container-fluid mainContainer">
-      <div className="row">
-        <h1 className="title_features">Welcome to SSH Smart Homes!</h1>
+    <div>
+      <div className="title-container">
+        <h1 className="page-title">Welcome to Student Smart Homes!</h1>
+        <p>Simplifying meals, Reducing waste.</p>
       </div>
-
-      <div className="row">
-        <h1 className="subHeading_style title_features_position">Possible content to add</h1>
-      </div>
-
+    <div className="container-fluid" style={{ marginBottom: "5%", marginTop:"20px"}}>
       <div className="row">
         <h1 className="subHeading_style title_features_position">Customer Testimonials</h1>
       </div>
@@ -97,6 +94,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

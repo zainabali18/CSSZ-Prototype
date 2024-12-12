@@ -1,6 +1,6 @@
 const axios = require("axios");
 
-const API_KEY = "df49e21c984f4e89a9f869dcad799782";
+const API_KEY = "7f405effc5c24517b6b82df163bb3b03";
 const BASE_URL = "https://api.spoonacular.com";
 
 const spoonacularApi = {
