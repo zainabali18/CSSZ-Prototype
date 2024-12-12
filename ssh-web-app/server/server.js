@@ -4,7 +4,6 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const { spoonacularApi } = require('../src/api/spoonacular');
 
 const API_KEY = '7f405effc5c24517b6b82df163bb3b03';
 
